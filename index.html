@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada de Qualificação Imersiva</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --roxo-fundo: #10101A;
+            --roxo-painel: #181828;
+            --roxo-primario: #8A2BE2;
+            --verde-neon: #00DF9A;
+            --branco-texto: #F0F0F0;
+            --cinza-texto: #a0a0b0;
+            --vermelho-erro: #e74c3c;
+            --font-family: 'Lexend', sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-family);
+            background: var(--roxo-fundo);
+            color: var(--branco-texto);
+        }
+        
+        body { display: flex; justify-content: center; align-items: center; }
+        
+        .interaction-container {
+            width: 95vw;
+            height: 90vh;
+            max-width: 420px;
+            max-height: 850px;
+            background: var(--roxo-painel);
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
+        
+        .interaction-container.visible {
+            opacity: 1;
+        }
+        
+        .media-container {
+            position: relative;
+            flex: 1;
+            background-color: #000;
+        }
+        
+        .background-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .background-image.active {
+            opacity: 1;
+        }
+        
+        .media-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(24, 24, 40, 0.95) 0%, rgba(24, 24, 40, 0.6) 35%, transparent 65%);
+            pointer-events: none;
+        }
+        
+        .control-button {
+            position: absolute; top: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--branco-texto); font-size: 1.2rem;
+            cursor: pointer; z-index: 60;
+            transition: all 0.3s ease;
+        }
+        
+        .control-button.top-left { left: 20px; }
+        
+        .control-button.top-right { right: 20px; }
+        
+        .control-button:hover { background: var(--roxo-primario); transform: scale(1.1); }
+        
+        .control-button.muted i::after {
+            content: '/'; position: absolute;
+            transform: rotate(15deg) translateX(1px);
+            font-weight: 600;
+        }
+        
+        .message-container {
+            position: absolute;
+            bottom: 120px;
+            left: 25px; right: 25px;
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .bot-message {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            line-height: 1.5;
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInMessage 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInMessage {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .input-area {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; padding: 25px; z-index: 30;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        #user-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto);
+            padding: 18px; border-radius: 12px;
+            text-align: center; font-size: 1.1rem;
+            outline: none; transition: all 0.3s ease;
+        }
+        
+        #user-input:focus {
+            border-color: var(--verde-neon);
+            background: rgba(0, 223, 154, 0.1);
+        }
+        
+        #user-input.error {
+            border-color: var(--vermelho-erro);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        #advance-btn {
+            background: var(--verde-neon);
+            color: var(--roxo-fundo);
+            border: none;
+            padding: 18px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #advance-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.03);
+        }
+        
+        .options-container {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; padding: 25px;
+            display: flex; flex-direction: column;
+            gap: 15px; z-index: 20;
+        }
+        
+        .option-btn {
+            width: 100%; background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto); padding: 18px;
+            border-radius: 12px; font-family: var(--font-family);
+            font-size: 1rem; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease;
+            backdrop-filter: blur(10px); text-align: center;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeInButton 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInButton {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .option-btn:hover { background: var(--verde-neon); color: var(--roxo-fundo); border-color: var(--verde-neon); transform: scale(1.03); }
+        
+        @media (max-width: 500px) {
+            .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
+            .control-button { top: 15px; }
+            .control-button.top-left { left: 15px; }
+            .control-button.top-right { right: 15px; }
+        }
+        
+        .loading-screen-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--roxo-painel);
+            z-index: 100;
+            opacity: 0;
+            animation: fadeInMessage 0.5s ease forwards;
+        }
+        
+        .loading-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ajustado para preencher a tela */
+            display: none;
+        }
+        
+        .loading-video.active {
+            display: block;
+        }
+        
+        #unmute-video-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 110;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInButton 1s 1s ease forwards;
+            display: none;
+        }
+
+        #unmute-video-btn:hover {
+            background: var(--verde-neon);
+            color: var(--roxo-fundo);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="interaction-container" class="interaction-container">
+        
+        <button id="back-btn" class="control-button top-left" style="display: none;" aria-label="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <button id="audio-btn" class="control-button top-right" style="display: none;" aria-label="Ativar/Desativar som">
+            <i class="fas fa-volume-high"></i>
+        </button>
+
+        <div class="media-container">
+            <img id="image-bg-1" class="background-image" src="" alt="Contexto visual da etapa">
+            <img id="image-bg-2" class="background-image" src="" alt="Contexto visual da etapa">
+            <div class="media-overlay"></div>
+        </div>
+
+        <div id="message-container" class="message-container"></div>
+        
+        <div id="input-area" class="input-area" style="display: none;">
+            <input type="text" id="user-input" autocomplete="off" aria-label="Sua resposta">
+            <button id="advance-btn" style="display: none;"><i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <div id="options-container" class="options-container"></div>
+    </div>
+
+    <audio id="background-music" loop></audio> 
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        
+            const webhookURL = 'http://localhost:5678/webhook-test/capturafilmes';
+            const finalRedirectURL = 'https://drive.google.com/file/d/1Fge73t1ZGBtqzNqGg84DO7uuGa7oX5fa/view?usp=sharing';
+            const backgroundMusicPath = 'musica.mp3';
+        
+            const validationRegex = {
+                name: /^[a-zA-ZáàãâéèêíìóòõôúùçÇÁÀÃÂÉÈÊÍÌÓÒÕÔÚÙ\s'-]{3,}$/,
+                phone: /^\(?(?:[1-9][0-9])\)?\s?9?\d{4,5}-?\d{4}$/,
+                email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            };
+            
+            const journey = [
+                { type: 'multiple-choice', name: "etapa_1_engajamento", image: "imagem01.png", options: [ { text: "Achar alguém com exatamente o mesmo gosto que eu.", value: 2 }, { text: "Conseguir combinar um horário com meus amigos.", value: 1 }, { text: "Decidir qual filme assistir no meio de tantas opções.", value: 0 } ] },
+                { type: 'text-input', name: 'nome', image: 'imagem02.png', question: 'Entendido. Para continuarmos, qual seu nome?', validation: validationRegex.name },
+                { type: 'text-input', name: 'email', image: 'imagem03.png', question: 'Obrigado. Agora, seu melhor e-mail.', validation: validationRegex.email },
+                { type: 'text-input', name: 'telefone', image: 'imagem04.png', question: 'Perfeito. E para finalizar, seu telefone.', validation: validationRegex.phone },
+                { type: 'multiple-choice', name: "etapa_2_solucao", image: "imagem05.png", options: [ { text: "Conhecer pessoas novas que são apaixonadas pelos mesmos filmes que eu.", value: 2 }, { text: "Ter um jeito fácil de me conectar com meus amigos que moram longe.", value: 1 }, { text: "Participar de debates e descobrir filmes que eu não conheceria sozinho.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_3_disponibilidade", image: "imagem06.png", options: [ { text: "Uma sessão mais íntima e privada, com um pequeno grupo de amigos.", value: 2 }, { text: "Um grande evento online para um lançamento, com muita gente comentando.", value: 1 }, { text: "Um 'match' um a um, para um encontro de filme mais focado.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_4_investimento", image: "imagem07.png", options: [ { text: "Chat de texto para mandar reações e comentários rápidos.", value: 2 }, { text: "Foco total no filme, com os comentários e debates apenas no final.", value: 1 }, { text: "Chat de voz para sentir que estamos todos juntos no mesmo sofá.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha   'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_6_concorrencia", image: "imagem09.png", options: [ { text: "Saber na hora quem dos meus amigos está livre para ver um filme comigo.", value: 2 }, { text: "Um botão 'Me Surpreenda' que sempre escolhe o filme perfeito para o meu humor.", value: 1 }, { text: "Ver estatísticas e gráficos divertidos sobre todos os filmes que já assisti.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_7_decisao", image: "imagem10.png", options: [ { text: "Eu preciso disso para ontem! Onde eu me inscrevo?", value: 2 }, { text: "Parece uma ideia excelente, quero muito acompanhar de perto.", value: 1 }, { text: "É interessante, estou curioso(a) para ver como vai funcionar.", value: 0 } ] }
+            ];
+            
+            const ui = {
+                interactionContainer: document.getElementById('interaction-container'),
+                messageContainer: document.getElementById('message-container'),
+                optionsContainer: document.getElementById('options-container'),
+                inputArea: document.getElementById('input-area'),
+                userInput: document.getElementById('user-input'),
+                imageBg1: document.getElementById('image-bg-1'),
+                imageBg2: document.getElementById('image-bg-2'),
+                backgroundMusic: document.getElementById('background-music'),
+                backBtn: document.getElementById('back-btn'),
+                audioBtn: document.getElementById('audio-btn'),
+                advanceBtn: document.getElementById('advance-btn'),
+            };
+        
+            let appState = 'JOURNEY';
+            let currentStepIndex = 0;
+            let userAnswers = {};
+            let isProcessing = false;
+            let activeImage = ui.imageBg1;
+            let inactiveImage = ui.imageBg2;
+            
+            let imageHistory = [];
+        
+            const updateImage = (newSrc) => {
+                return new Promise(async (resolve) => {
+                    const currentSrc = activeImage.src.split('/').pop();
+                    const newSrcFileName = newSrc.split('/').pop();
+        
+                    if (!newSrc || currentSrc === newSrcFileName) {
+                        return resolve();
+                    }
+        
+                    inactiveImage.src = newSrc;
+                    
+                    await new Promise(imgResolve => {
+                        inactiveImage.onload = imgResolve;
+                        inactiveImage.onerror = () => {
+                            console.error(`ERRO: Não foi possível carregar a imagem "${newSrc}".`);
+                            imgResolve();
+                        };
+                    });
+        
+                    activeImage.classList.remove('active');
+        
+                    setTimeout(() => {
+                        inactiveImage.classList.add('active');
+                        [activeImage, inactiveImage] = [inactiveImage, activeImage];
+                        resolve();
+                    }, 800);
+                });
+            };
+            
+            const renderStep = async () => {
+                if (currentStepIndex >= journey.length) {
+                    finishJourney();
+                    return;
+                }
+                isProcessing = true;
+                appState = 'JOURNEY';
+                const currentStep = journey[currentStepIndex];
+        
+                ui.backBtn.style.display = currentStepIndex > 0 ? 'flex' : 'none';
+                ui.audioBtn.style.display = 'flex';
+                
+                await updateImage(currentStep.image);
+                
+                ui.messageContainer.innerHTML = '';
+                ui.optionsContainer.innerHTML = '';
+                ui.inputArea.style.display = 'none';
+                ui.advanceBtn.style.display = 'none';
+
+                if (currentStep.type === 'text-input') {
+                    ui.inputArea.style.display = 'flex';
+                    ui.userInput.value = userAnswers[currentStep.name] || '';
+                    ui.userInput.classList.remove('error');
+                    ui.userInput.focus();
+                    ui.advanceBtn.style.display = 'flex';
+                    const msgEl = document.createElement('div');
+                    msgEl.className = 'bot-message';
+                    msgEl.textContent = currentStep.question;
+                    ui.messageContainer.appendChild(msgEl);
+                } else if (currentStep.type === 'multiple-choice') {
+                    currentStep.options.forEach((option, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'option-btn';
+                        button.textContent = option.text;
+                        button.style.animationDelay = `${index * 100}ms`;
+                        button.onclick = () => handleChoice(option, currentStep.name);
+                        ui.optionsContainer.appendChild(button);
+                    });
+                }
+                
+                setTimeout(() => isProcessing = false, 200);
+            };
+        
+            const handleTextInput = () => {
+                if (isProcessing) return;
+                const currentStep = journey[currentStepIndex];
+                const answer = ui.userInput.value.trim();
+                if (currentStep.validation && !currentStep.validation.test(answer)) {
+                    ui.userInput.classList.add('error');
+                    setTimeout(() => ui.userInput.classList.remove('error'), 500);
+                    return;
+                }
+                isProcessing = true;
+                userAnswers[currentStep.name] = answer;
+                imageHistory.push(journey[currentStepIndex].image);
+                currentStepIndex++;
+                renderStep();
+            };
+            
+            const handleChoice = (option, stepName) => {
+                if (isProcessing) return;
+                isProcessing = true;
+                userAnswers[stepName] = { text: option.text, value: option.value };
+                imageHistory.push(journey[currentStepIndex].image);
+                currentStepIndex++;
+                renderStep();
+            };
+        
+            const goBack = async () => {
+                if (isProcessing || currentStepIndex === 0) return;
+                isProcessing = true;
+                
+                currentStepIndex--;
+                const previousStep = journey[currentStepIndex];
+                delete userAnswers[previousStep.name];
+        
+                if (imageHistory.length > 0) {
+                    const previousImageSrc = imageHistory.pop();
+                    await updateImage(previousImageSrc);
+                }
+                
+                renderStep();
+            };
+        
+            const classifyLead = () => {
+                const score = Object.values(userAnswers)
+                    .filter(answer => typeof answer === 'object' && typeof answer.value === 'number')
+                    .reduce((sum, answer) => sum + answer.value, 0);
+                if (score >= 10) return "Quente";
+                if (score >= 5) return "Morno";
+                return "Frio";
+            };
+        
+            const finishJourney = async () => {
+                isProcessing = true;
+                appState = 'FINISHED';
+                ui.backgroundMusic.pause();
+                ui.inputArea.style.display = 'none';
+                ui.optionsContainer.innerHTML = '';
+                activeImage.classList.remove('active');
+                inactiveImage.classList.remove('active');
+                ui.backBtn.style.display = 'none';
+                ui.audioBtn.style.display = 'none';
+                ui.messageContainer.innerHTML = '';
+                const payload = {
+                    nome: userAnswers.nome,
+                    email: userAnswers.email,
+                    telefone: userAnswers.telefone,
+                    classificacao_final: classifyLead()
+                };
+                journey.forEach(step => {
+                    if(step.type === 'multiple-choice' && userAnswers[step.name]) {
+                        payload[step.name] = userAnswers[step.name].text;
+                    }
+                });
+                try {
+                    await fetch(webhookURL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    console.log('Dados enviados com sucesso para o webhook!');
+                } catch (error) {
+                    console.error('Falha ao enviar dados:', error);
+                }
+
+                // Cria o container da tela de carregamento final
+                const loadingScreen = document.createElement('div');
+                loadingScreen.className = 'loading-screen-container';
+                loadingScreen.innerHTML = `<video src="loading-video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
+                                           <button id="unmute-video-btn" style="display: none;">Ativar Som</button>`;
+                ui.interactionContainer.appendChild(loadingScreen);
+                
+                const finalVideo = document.getElementById('final-loading-video');
+                const unmuteBtn = document.getElementById('unmute-video-btn');
+
+                // Tenta tocar o vídeo com som
+                const playPromise = finalVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        finalVideo.classList.add('active');
+                    }).catch(error => {
+                        console.warn("Autoplay com som bloqueado. Tocando sem som e exibindo botão para ativar.", error);
+                        finalVideo.muted = true;
+                        finalVideo.play();
+                        finalVideo.classList.add('active');
+                        unmuteBtn.style.display = 'block';
+                    });
+                }
+                
+                // Lógica para o botão de ativar som
+                unmuteBtn.addEventListener('click', () => {
+                    finalVideo.muted = false;
+                    unmuteBtn.style.display = 'none';
+                });
+
+                const totalDuration = 30;
+                setTimeout(() => {
+                    window.location.href = finalRedirectURL;
+                }, totalDuration * 1000);
+            };
+            
+            const openFullscreen = () => {
+                const elem = document.documentElement;
+                if (document.fullscreenElement) return;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(err => console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`));
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            };
+            
+            const init = async () => {
+                if (backgroundMusicPath) {
+                    ui.backgroundMusic.src = backgroundMusicPath;
+                    ui.backgroundMusic.volume = 0.2;
+                }
+                const imageSources = journey.map(step => step.image).filter(Boolean);
+                const imagePromises = imageSources.map(src => new Promise((resolve) => {
+                    const img = new Image(); img.src = src; img.onload = resolve; img.onerror = resolve;
+                }));
+                await Promise.all(imagePromises);
+                activeImage.src = journey[0].image;
+                await new Promise(resolve => setTimeout(resolve, 10));
+                activeImage.classList.add('active');
+                ui.interactionContainer.classList.add('visible');
+                renderStep();
+            };
+            
+            ui.userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleTextInput();
+            });
+            ui.backBtn.addEventListener('click', goBack);
+            ui.advanceBtn.addEventListener('click', handleTextInput);
+            ui.audioBtn.addEventListener('click', () => {
+                const music = ui.backgroundMusic;
+                if (music.paused) {
+                    music.play().catch(() => {});
+                    ui.audioBtn.classList.remove('muted');
+                } else {
+                    music.pause();
+                    ui.audioBtn.classList.add('muted');
+                }
+            });
+            document.body.addEventListener('click', () => {
+                if (ui.backgroundMusic.paused && appState !== 'FINISHED') {
+                     ui.backgroundMusic.play().catch(() => {});
+                     ui.audioBtn.classList.remove('muted');
+                }
+                openFullscreen();
+            }, { once: true });
+            
+            init();
+        });
+    </script>
+</body>
+</html>
