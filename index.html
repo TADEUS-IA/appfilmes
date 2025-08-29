@@ -52,54 +52,220 @@
             transition: opacity 1s ease-out;
         }
         
-        .interaction-container.visible { opacity: 1; }
-        .media-container { position: relative; flex: 1; background-color: #000; }
-        .background-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; }
-        .background-image.active { opacity: 1; }
-        .media-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(24, 24, 40, 0.95) 0%, rgba(24, 24, 40, 0.6) 35%, transparent 65%); pointer-events: none; }
-        .control-button { position: absolute; top: 20px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; color: var(--branco-texto); font-size: 1.2rem; cursor: pointer; z-index: 60; transition: all 0.3s ease; }
+        .interaction-container.visible {
+            opacity: 1;
+        }
+        
+        .media-container {
+            position: relative;
+            flex: 1;
+            background-color: #000;
+        }
+        
+        .background-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .background-image.active {
+            opacity: 1;
+        }
+        
+        .media-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(24, 24, 40, 0.95) 0%, rgba(24, 24, 40, 0.6) 35%, transparent 65%);
+            pointer-events: none;
+        }
+        
+        .control-button {
+            position: absolute; top: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--branco-texto); font-size: 1.2rem;
+            cursor: pointer; z-index: 60;
+            transition: all 0.3s ease;
+        }
+        
         .control-button.top-left { left: 20px; }
+        
         .control-button.top-right { right: 20px; }
+        
         .control-button:hover { background: var(--roxo-primario); transform: scale(1.1); }
-        .control-button.muted i::after { content: '/'; position: absolute; transform: rotate(15deg) translateX(1px); font-weight: 600; }
-        .message-container { position: absolute; bottom: 120px; left: 25px; right: 25px; z-index: 20; text-align: center; pointer-events: none; }
-        .bot-message { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); padding: 15px 25px; border-radius: 12px; display: inline-block; line-height: 1.5; font-size: 1.1rem; font-weight: 500; opacity: 0; transform: translateY(20px); animation: fadeInMessage 0.6s ease forwards; }
-        @keyframes fadeInMessage { to { opacity: 1; transform: translateY(0); } }
-        .input-area { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px; z-index: 30; display: flex; align-items: center; gap: 10px; }
-        #user-input { flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--branco-texto); padding: 18px; border-radius: 12px; text-align: center; font-size: 1.1rem; outline: none; transition: all 0.3s ease; }
-        #user-input:focus { border-color: var(--verde-neon); background: rgba(0, 223, 154, 0.1); }
-        #user-input.error { border-color: var(--vermelho-erro); animation: shake 0.5s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        #advance-btn { background: var(--verde-neon); color: var(--roxo-fundo); border: none; padding: 18px 20px; border-radius: 12px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; }
-        #advance-btn:hover { opacity: 0.8; transform: scale(1.03); }
-        .options-container { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 20; }
-        .option-btn { width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--branco-texto); padding: 18px; border-radius: 12px; font-family: var(--font-family); font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); text-align: center; opacity: 0; transform: translateY(20px); animation: fadeInButton 0.5s ease forwards; }
-        @keyframes fadeInButton { to { opacity: 1; transform: translateY(0); } }
+        
+        .control-button.muted i::after {
+            content: '/'; position: absolute;
+            transform: rotate(15deg) translateX(1px);
+            font-weight: 600;
+        }
+        
+        .message-container {
+            position: absolute;
+            bottom: 120px;
+            left: 25px; right: 25px;
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .bot-message {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            line-height: 1.5;
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInMessage 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInMessage {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .input-area {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; padding: 25px; z-index: 30;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        #user-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto);
+            padding: 18px; border-radius: 12px;
+            text-align: center; font-size: 1.1rem;
+            outline: none; transition: all 0.3s ease;
+        }
+        
+        #user-input:focus {
+            border-color: var(--verde-neon);
+            background: rgba(0, 223, 154, 0.1);
+        }
+        
+        #user-input.error {
+            border-color: var(--vermelho-erro);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        #advance-btn {
+            background: var(--verde-neon);
+            color: var(--roxo-fundo);
+            border: none;
+            padding: 18px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #advance-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.03);
+        }
+        
+        .options-container {
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; padding: 25px;
+            display: flex; flex-direction: column;
+            gap: 15px; z-index: 20;
+        }
+        
+        .option-btn {
+            width: 100%; background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto); padding: 18px;
+            border-radius: 12px; font-family: var(--font-family);
+            font-size: 1rem; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease;
+            backdrop-filter: blur(10px); text-align: center;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeInButton 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInButton {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .option-btn:hover { background: var(--verde-neon); color: var(--roxo-fundo); border-color: var(--verde-neon); transform: scale(1.03); }
-        .loading-screen-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: var(--roxo-fundo); z-index: 100; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
-        .loading-screen-container.visible { opacity: 1; pointer-events: all; }
-        .loading-video { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .loading-video.active { display: block; }
-        #unmute-video-btn { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 110; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--branco-texto); padding: 12px 25px; border-radius: 50px; font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; opacity: 0; animation: fadeInButton 1s 1s ease forwards; display: none; }
-        #unmute-video-btn:hover { background: var(--verde-neon); color: var(--roxo-fundo); }
-
-        /* --- NOVOS ESTILOS PARA A GALERIA DE FILMES --- */
-        #movie-gallery { display: none; /* Começa oculto */ flex-direction: column; width: 100%; height: 100%; background-color: var(--roxo-fundo); z-index: 120; opacity: 0; transition: opacity 0.8s ease-in-out; }
-        #movie-gallery.visible { display: flex; opacity: 1; }
-        .gallery-header { padding: 25px; text-align: center; font-size: 1.5rem; font-weight: 600; background-color: var(--roxo-painel); }
-        .gallery-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 25px; overflow-y: auto; flex: 1; }
-        .movie-poster { width: calc(50% - 10px); /* 2 por linha */ max-width: 180px; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .movie-poster img { width: 100%; height: 100%; object-fit: cover; }
-        .movie-poster:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0, 223, 154, 0.4); cursor: pointer; }
-        /* Estilos de scrollbar para um visual mais limpo */
-        .gallery-grid::-webkit-scrollbar { width: 8px; }
-        .gallery-grid::-webkit-scrollbar-track { background: var(--roxo-painel); }
-        .gallery-grid::-webkit-scrollbar-thumb { background-color: var(--roxo-primario); border-radius: 10px; border: 2px solid var(--roxo-painel); }
-
+        
         @media (max-width: 500px) {
             .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
-            .control-button { top: 15px; } .control-button.top-left { left: 15px; } .control-button.top-right { right: 15px; }
-            .movie-poster { width: calc(33.33% - 10px); /* 3 por linha em telas menores */ }
+            .control-button { top: 15px; }
+            .control-button.top-left { left: 15px; }
+            .control-button.top-right { right: 15px; }
+        }
+        
+        .loading-screen-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            z-index: 100;
+            opacity: 0;
+            animation: fadeInMessage 0.5s ease forwards;
+        }
+        
+        .loading-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: none;
+        }
+        
+        .loading-video.active {
+            display: block;
+        }
+        
+        #unmute-video-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 110;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--branco-texto);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInButton 1s 1s ease forwards;
+            display: none;
+        }
+
+        #unmute-video-btn:hover {
+            background: var(--verde-neon);
+            color: var(--roxo-fundo);
         }
     </style>
 </head>
@@ -129,38 +295,15 @@
         </div>
 
         <div id="options-container" class="options-container"></div>
-
-        <div id="loading-screen" class="loading-screen-container">
-            <video src="video.mp4" id="final-loading-video" class="loading-video" playsinline></video>
-            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>
-        </div>
-
-        <div id="movie-gallery">
-            <div class="gallery-header">Escolha um Filme</div>
-            <div id="gallery-grid" class="gallery-grid">
-                </div>
-        </div>
     </div>
 
     <audio id="background-music" loop></audio> 
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
-            // ✅ PONTO CENTRAL DE EDIÇÃO DO CATÁLOGO DE FILMES
-            // Adicione ou remova filmes facilmente editando esta lista.
-            const movieCatalog = [
-                { poster: 'filme01.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { poster: 'poster02.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { poster: 'poster03.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { poster: 'poster04.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { poster: 'poster05.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { poster: 'poster06.jpg', driveLink: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                // Adicione mais filmes aqui, seguindo o mesmo formato.
-                // Exemplo: { poster: 'nome-da-imagem.jpg', driveLink: 'https://link-para-o-filme' },
-            ];
-
+        
             const webhookURL = 'https://vendas-n8n.dttlw7.easypanel.host/webhook-test/filmes';
+            const finalRedirectURL = 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=sharing';
             const backgroundMusicPath = 'musica.mp3';
         
             const validationRegex = {
@@ -177,7 +320,7 @@
                 { type: 'multiple-choice', name: "etapa_2_solucao", image: "imagem05.png", options: [ { text: "Conhecer pessoas novas que são apaixonadas pelos mesmos filmes que eu.", value: 2 }, { text: "Ter um jeito fácil de me conectar com meus amigos que moram longe.", value: 1 }, { text: "Participar de debates e descobrir filmes que eu não conheceria sozinho.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_3_disponibilidade", image: "imagem06.png", options: [ { text: "Uma sessão mais íntima e privada, com um pequeno grupo de amigos.", value: 2 }, { text: "Um grande evento online para um lançamento, com muita gente comentando.", value: 1 }, { text: "Um 'match' um a um, para um encontro de filme mais focado.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_4_investimento", image: "imagem07.png", options: [ { text: "Chat de texto para mandar reações e comentários rápidos.", value: 2 }, { text: "Foco total no filme, com os comentários e debates apenas no final.", value: 1 }, { text: "Chat de voz para sentir que estamos todos juntos no mesmo sofá.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha   'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha   'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_6_concorrencia", image: "imagem09.png", options: [ { text: "Saber na hora quem dos meus amigos está livre para ver um filme comigo.", value: 2 }, { text: "Um botão 'Me Surpreenda' que sempre escolhe o filme perfeito para o meu humor.", value: 1 }, { text: "Ver estatísticas e gráficos divertidos sobre todos os filmes que já assisti.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_7_decisao", image: "imagem10.png", options: [ { text: "Eu preciso disso para ontem! Onde eu me inscrevo?", value: 2 }, { text: "Parece uma ideia excelente, quero muito acompanhar de perto.", value: 1 }, { text: "É interessante, estou curioso(a) para ver como vai funcionar.", value: 0 } ] }
             ];
@@ -194,11 +337,6 @@
                 backBtn: document.getElementById('back-btn'),
                 audioBtn: document.getElementById('audio-btn'),
                 advanceBtn: document.getElementById('advance-btn'),
-                loadingScreen: document.getElementById('loading-screen'),
-                finalVideo: document.getElementById('final-loading-video'),
-                unmuteBtn: document.getElementById('unmute-video-btn'),
-                movieGallery: document.getElementById('movie-gallery'),
-                galleryGrid: document.getElementById('gallery-grid'),
             };
     
             let appState = 'JOURNEY';
@@ -207,19 +345,30 @@
             let isProcessing = false;
             let activeImage = ui.imageBg1;
             let inactiveImage = ui.imageBg2;
+            
             let imageHistory = [];
     
             const updateImage = (newSrc) => {
                 return new Promise(async (resolve) => {
                     const currentSrc = activeImage.src.split('/').pop();
                     const newSrcFileName = newSrc.split('/').pop();
-                    if (!newSrc || currentSrc === newSrcFileName) { return resolve(); }
+    
+                    if (!newSrc || currentSrc === newSrcFileName) {
+                        return resolve();
+                    }
+    
                     inactiveImage.src = newSrc;
+                    
                     await new Promise(imgResolve => {
                         inactiveImage.onload = imgResolve;
-                        inactiveImage.onerror = () => { console.error(`ERRO: Não foi possível carregar a imagem "${newSrc}".`); imgResolve(); };
+                        inactiveImage.onerror = () => {
+                            console.error(`ERRO: Não foi possível carregar a imagem "${newSrc}".`);
+                            imgResolve();
+                        };
                     });
+    
                     activeImage.classList.remove('active');
+    
                     setTimeout(() => {
                         inactiveImage.classList.add('active');
                         [activeImage, inactiveImage] = [inactiveImage, activeImage];
@@ -229,17 +378,24 @@
             };
             
             const renderStep = async () => {
-                if (currentStepIndex >= journey.length) { finishJourney(); return; }
+                if (currentStepIndex >= journey.length) {
+                    finishJourney();
+                    return;
+                }
                 isProcessing = true;
                 appState = 'JOURNEY';
                 const currentStep = journey[currentStepIndex];
+    
                 ui.backBtn.style.display = currentStepIndex > 0 ? 'flex' : 'none';
                 ui.audioBtn.style.display = 'flex';
+                
                 await updateImage(currentStep.image);
+                
                 ui.messageContainer.innerHTML = '';
                 ui.optionsContainer.innerHTML = '';
                 ui.inputArea.style.display = 'none';
                 ui.advanceBtn.style.display = 'none';
+
                 if (currentStep.type === 'text-input') {
                     ui.inputArea.style.display = 'flex';
                     ui.userInput.value = userAnswers[currentStep.name] || '';
@@ -260,6 +416,7 @@
                         ui.optionsContainer.appendChild(button);
                     });
                 }
+                
                 setTimeout(() => isProcessing = false, 200);
             };
     
@@ -291,23 +448,29 @@
             const goBack = async () => {
                 if (isProcessing || currentStepIndex === 0) return;
                 isProcessing = true;
+                
                 currentStepIndex--;
                 const previousStep = journey[currentStepIndex];
                 delete userAnswers[previousStep.name];
+    
                 if (imageHistory.length > 0) {
                     const previousImageSrc = imageHistory.pop();
                     await updateImage(previousImageSrc);
                 }
+                
                 renderStep();
             };
     
             const classifyLead = () => {
-                const score = Object.values(userAnswers).filter(answer => typeof answer === 'object' && typeof answer.value === 'number').reduce((sum, answer) => sum + answer.value, 0);
+                const score = Object.values(userAnswers)
+                    .filter(answer => typeof answer === 'object' && typeof answer.value === 'number')
+                    .reduce((sum, answer) => sum + answer.value, 0);
                 if (score >= 10) return "Quente";
                 if (score >= 5) return "Morno";
                 return "Frio";
             };
     
+            // ✅ FUNÇÃO TOTALMENTE RESTAURADA E CORRIGIDA
             const finishJourney = async () => {
                 isProcessing = true;
                 appState = 'FINISHED';
@@ -319,96 +482,100 @@
                 ui.backBtn.style.display = 'none';
                 ui.audioBtn.style.display = 'none';
                 ui.messageContainer.innerHTML = '';
-                
-                const payload = { nome: userAnswers.nome, email: userAnswers.email, telefone: userAnswers.telefone, classificacao_final: classifyLead() };
+
+                // --- OTIMIZAÇÃO APLICADA AQUI ---
+
+                // 1. Prepara os dados para envio.
+                const payload = {
+                    nome: userAnswers.nome,
+                    email: userAnswers.email,
+                    telefone: userAnswers.telefone,
+                    classificacao_final: classifyLead()
+                };
                 journey.forEach(step => {
-                    if(step.type === 'multiple-choice' && userAnswers[step.name]) { payload[step.name] = userAnswers[step.name].text; }
+                    if(step.type === 'multiple-choice' && userAnswers[step.name]) {
+                        payload[step.name] = userAnswers[step.name].text;
+                    }
                 });
 
-                // Mostra a tela de carregamento com o vídeo.
-                ui.loadingScreen.classList.add('visible');
+                // 2. AÇÃO PRINCIPAL: Mostrar o vídeo IMEDIATAMENTE.
+                // O código abaixo agora executa sem esperar pelo envio dos dados.
+                const loadingScreen = document.createElement('div');
+                loadingScreen.className = 'loading-screen-container';
+                loadingScreen.innerHTML = `<video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
+                                            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>`;
+                ui.interactionContainer.appendChild(loadingScreen);
                 
-                const playPromise = ui.finalVideo.play();
+                const finalVideo = document.getElementById('final-loading-video');
+                const unmuteBtn = document.getElementById('unmute-video-btn');
+
+                const playPromise = finalVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        ui.finalVideo.classList.add('active');
+                        finalVideo.classList.add('active');
                     }).catch(error => {
-                        console.warn("Autoplay com som bloqueado.", error);
-                        ui.finalVideo.muted = true;
-                        ui.finalVideo.play();
-                        ui.finalVideo.classList.add('active');
-                        ui.unmuteBtn.style.display = 'block';
+                        console.warn("Autoplay com som bloqueado. Tocando sem som e exibindo botão para ativar.", error);
+                        finalVideo.muted = true;
+                        finalVideo.play();
+                        finalVideo.classList.add('active');
+                        unmuteBtn.style.display = 'block';
                     });
                 }
                 
-                ui.unmuteBtn.addEventListener('click', () => {
-                    ui.finalVideo.muted = false;
-                    ui.unmuteBtn.style.display = 'none';
+                unmuteBtn.addEventListener('click', () => {
+                    finalVideo.muted = false;
+                    unmuteBtn.style.display = 'none';
                 });
 
-                // ✅ NOVA LÓGICA: Quando o vídeo terminar, mostra a galeria.
-                ui.finalVideo.addEventListener('ended', () => {
-                    showMovieGallery();
-                });
+                const totalDuration = 30;
+                setTimeout(() => {
+                    window.location.href = finalRedirectURL;
+                }, totalDuration * 1000);
 
-                // Envia os dados em segundo plano, sem bloquear a UI.
+                // 3. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
+                // Removemos o "await" para não bloquear a exibição do vídeo.
                 fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 })
                 .then(response => {
-                    if (response.ok) { console.log('Dados enviados com sucesso para o webhook em segundo plano!'); } 
-                    else { console.error('Webhook retornou um erro:', response.statusText); }
+                    if (response.ok) {
+                        console.log('Dados enviados com sucesso para o webhook em segundo plano!');
+                    } else {
+                        console.error('Webhook retornou um erro:', response.statusText);
+                    }
                 })
-                .catch(error => { console.error('Falha ao enviar dados em segundo plano:', error); });
-            };
-
-            // ✅ NOVA FUNÇÃO: Constrói e exibe a galeria de filmes.
-            const showMovieGallery = () => {
-                // Esconde a tela do vídeo.
-                ui.loadingScreen.classList.remove('visible');
-                
-                // Limpa a galeria para o caso de ser chamada novamente.
-                ui.galleryGrid.innerHTML = '';
-
-                // Preenche a galeria com os filmes do catálogo.
-                movieCatalog.forEach(movie => {
-                    const posterLink = document.createElement('a');
-                    posterLink.href = movie.driveLink;
-                    posterLink.target = '_blank'; // Abre o link em uma nova aba.
-                    posterLink.rel = 'noopener noreferrer';
-                    posterLink.className = 'movie-poster';
-
-                    const posterImg = document.createElement('img');
-                    posterImg.src = movie.poster;
-                    posterImg.alt = 'Capa do Filme'; // Acessibilidade.
-                    posterImg.loading = 'lazy'; // Otimização de performance.
-
-                    posterLink.appendChild(posterImg);
-                    ui.galleryGrid.appendChild(posterLink);
+                .catch(error => {
+                    // Apenas registramos o erro no console, sem impactar o usuário.
+                    console.error('Falha ao enviar dados em segundo plano:', error);
                 });
-                
-                // Exibe a galeria com uma transição suave.
-                ui.movieGallery.classList.add('visible');
             };
             
             const openFullscreen = () => {
                 const elem = document.documentElement;
                 if (document.fullscreenElement) return;
-                if (elem.requestFullscreen) { elem.requestFullscreen().catch(err => console.error(`Erro: ${err.message}`)); } 
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
-                else if (elem.mozRequestFullScreen) { elem.mozRequestFullScreen(); } 
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(err => console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`));
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
             };
             
             const init = async () => {
-                if (backgroundMusicPath) { ui.backgroundMusic.src = backgroundMusicPath; ui.backgroundMusic.volume = 0.2; }
-                const imageSources = [...journey.map(step => step.image), ...movieCatalog.map(movie => movie.poster)].filter(Boolean);
+                if (backgroundMusicPath) {
+                    ui.backgroundMusic.src = backgroundMusicPath;
+                    ui.backgroundMusic.volume = 0.2;
+                }
+                const imageSources = journey.map(step => step.image).filter(Boolean);
                 const imagePromises = imageSources.map(src => new Promise((resolve) => {
                     const img = new Image(); img.src = src; img.onload = resolve; img.onerror = resolve;
                 }));
-                await Promise.all(imagePromises); // Pré-carrega todas as imagens
+                await Promise.all(imagePromises);
                 activeImage.src = journey[0].image;
                 await new Promise(resolve => setTimeout(resolve, 10));
                 activeImage.classList.add('active');
@@ -416,16 +583,26 @@
                 renderStep();
             };
             
-            ui.userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleTextInput(); });
+            ui.userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleTextInput();
+            });
             ui.backBtn.addEventListener('click', goBack);
             ui.advanceBtn.addEventListener('click', handleTextInput);
             ui.audioBtn.addEventListener('click', () => {
                 const music = ui.backgroundMusic;
-                if (music.paused) { music.play().catch(() => {}); ui.audioBtn.classList.remove('muted'); } 
-                else { music.pause(); ui.audioBtn.classList.add('muted'); }
+                if (music.paused) {
+                    music.play().catch(() => {});
+                    ui.audioBtn.classList.remove('muted');
+                } else {
+                    music.pause();
+                    ui.audioBtn.classList.add('muted');
+                }
             });
             document.body.addEventListener('click', () => {
-                if (ui.backgroundMusic.paused && appState !== 'FINISHED') { ui.backgroundMusic.play().catch(() => {}); ui.audioBtn.classList.remove('muted'); }
+                if (ui.backgroundMusic.paused && appState !== 'FINISHED') {
+                     ui.backgroundMusic.play().catch(() => {});
+                     ui.audioBtn.classList.remove('muted');
+                }
                 openFullscreen();
             }, { once: true });
             
@@ -433,4 +610,6 @@
         });
     </script>
 </body>
+
 </html>
+
