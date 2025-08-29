@@ -224,7 +224,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: var(--roxo-painel);
+            background-color: #000;
             z-index: 100;
             opacity: 0;
             animation: fadeInMessage 0.5s ease forwards;
@@ -233,7 +233,7 @@
         .loading-video {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ajustado para preencher a tela */
+            object-fit: contain; 
             display: none;
         }
         
@@ -338,7 +338,7 @@
                 audioBtn: document.getElementById('audio-btn'),
                 advanceBtn: document.getElementById('advance-btn'),
             };
-        
+    
             let appState = 'JOURNEY';
             let currentStepIndex = 0;
             let userAnswers = {};
@@ -347,16 +347,16 @@
             let inactiveImage = ui.imageBg2;
             
             let imageHistory = [];
-        
+    
             const updateImage = (newSrc) => {
                 return new Promise(async (resolve) => {
                     const currentSrc = activeImage.src.split('/').pop();
                     const newSrcFileName = newSrc.split('/').pop();
-        
+    
                     if (!newSrc || currentSrc === newSrcFileName) {
                         return resolve();
                     }
-        
+    
                     inactiveImage.src = newSrc;
                     
                     await new Promise(imgResolve => {
@@ -366,9 +366,9 @@
                             imgResolve();
                         };
                     });
-        
+    
                     activeImage.classList.remove('active');
-        
+    
                     setTimeout(() => {
                         inactiveImage.classList.add('active');
                         [activeImage, inactiveImage] = [inactiveImage, activeImage];
@@ -385,7 +385,7 @@
                 isProcessing = true;
                 appState = 'JOURNEY';
                 const currentStep = journey[currentStepIndex];
-        
+    
                 ui.backBtn.style.display = currentStepIndex > 0 ? 'flex' : 'none';
                 ui.audioBtn.style.display = 'flex';
                 
@@ -419,7 +419,7 @@
                 
                 setTimeout(() => isProcessing = false, 200);
             };
-        
+    
             const handleTextInput = () => {
                 if (isProcessing) return;
                 const currentStep = journey[currentStepIndex];
@@ -444,7 +444,7 @@
                 currentStepIndex++;
                 renderStep();
             };
-        
+    
             const goBack = async () => {
                 if (isProcessing || currentStepIndex === 0) return;
                 isProcessing = true;
@@ -452,7 +452,7 @@
                 currentStepIndex--;
                 const previousStep = journey[currentStepIndex];
                 delete userAnswers[previousStep.name];
-        
+    
                 if (imageHistory.length > 0) {
                     const previousImageSrc = imageHistory.pop();
                     await updateImage(previousImageSrc);
@@ -460,7 +460,7 @@
                 
                 renderStep();
             };
-        
+    
             const classifyLead = () => {
                 const score = Object.values(userAnswers)
                     .filter(answer => typeof answer === 'object' && typeof answer.value === 'number')
@@ -469,7 +469,8 @@
                 if (score >= 5) return "Morno";
                 return "Frio";
             };
-        
+    
+            // ✅ FUNÇÃO TOTALMENTE RESTAURADA E CORRIGIDA
             const finishJourney = async () => {
                 isProcessing = true;
                 appState = 'FINISHED';
@@ -481,6 +482,10 @@
                 ui.backBtn.style.display = 'none';
                 ui.audioBtn.style.display = 'none';
                 ui.messageContainer.innerHTML = '';
+
+                // --- OTIMIZAÇÃO APLICADA AQUI ---
+
+                // 1. Prepara os dados para envio.
                 const payload = {
                     nome: userAnswers.nome,
                     email: userAnswers.email,
@@ -492,28 +497,18 @@
                         payload[step.name] = userAnswers[step.name].text;
                     }
                 });
-                try {
-                    await fetch(webhookURL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    console.log('Dados enviados com sucesso para o webhook!');
-                } catch (error) {
-                    console.error('Falha ao enviar dados:', error);
-                }
 
-                // Cria o container da tela de carregamento final
+                // 2. AÇÃO PRINCIPAL: Mostrar o vídeo IMEDIATAMENTE.
+                // O código abaixo agora executa sem esperar pelo envio dos dados.
                 const loadingScreen = document.createElement('div');
                 loadingScreen.className = 'loading-screen-container';
-                loadingScreen.innerHTML = `<video src="loading-video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
-                                           <button id="unmute-video-btn" style="display: none;">Ativar Som</button>`;
+                loadingScreen.innerHTML = `<video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
+                                            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>`;
                 ui.interactionContainer.appendChild(loadingScreen);
                 
                 const finalVideo = document.getElementById('final-loading-video');
                 const unmuteBtn = document.getElementById('unmute-video-btn');
 
-                // Tenta tocar o vídeo com som
                 const playPromise = finalVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
@@ -527,7 +522,6 @@
                     });
                 }
                 
-                // Lógica para o botão de ativar som
                 unmuteBtn.addEventListener('click', () => {
                     finalVideo.muted = false;
                     unmuteBtn.style.display = 'none';
@@ -537,6 +531,25 @@
                 setTimeout(() => {
                     window.location.href = finalRedirectURL;
                 }, totalDuration * 1000);
+
+                // 3. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
+                // Removemos o "await" para não bloquear a exibição do vídeo.
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Dados enviados com sucesso para o webhook em segundo plano!');
+                    } else {
+                        console.error('Webhook retornou um erro:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    // Apenas registramos o erro no console, sem impactar o usuário.
+                    console.error('Falha ao enviar dados em segundo plano:', error);
+                });
             };
             
             const openFullscreen = () => {
@@ -599,16 +612,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
