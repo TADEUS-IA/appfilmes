@@ -96,11 +96,8 @@
         }
         
         .control-button.top-left { left: 20px; }
-        
         .control-button.top-right { right: 20px; }
-        
         .control-button:hover { background: var(--roxo-primario); transform: scale(1.1); }
-        
         .control-button.muted i::after {
             content: '/'; position: absolute;
             transform: rotate(15deg) translateX(1px);
@@ -207,19 +204,9 @@
         
         .option-btn:hover { background: var(--verde-neon); color: var(--roxo-fundo); border-color: var(--verde-neon); transform: scale(1.03); }
         
-        @media (max-width: 500px) {
-            .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
-            .control-button { top: 15px; }
-            .control-button.top-left { left: 15px; }
-            .control-button.top-right { right: 15px; }
-        }
-        
         .loading-screen-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -231,8 +218,7 @@
         }
         
         .loading-video {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: contain; 
             display: none;
         }
@@ -243,21 +229,17 @@
         
         #unmute-video-btn {
             position: absolute;
-            bottom: 25px;
-            left: 50%;
+            bottom: 25px; left: 50%;
             transform: translateX(-50%);
             z-index: 110;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: var(--branco-texto);
-            padding: 12px 25px;
-            border-radius: 50px;
+            padding: 12px 25px; border-radius: 50px;
             font-family: var(--font-family);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease;
             opacity: 0;
             animation: fadeInButton 1s 1s ease forwards;
             display: none;
@@ -267,6 +249,64 @@
             background: var(--verde-neon);
             color: var(--roxo-fundo);
         }
+
+        /* --- NOVOS ESTILOS PARA SELEÇÃO DE FILMES --- */
+        #movie-selection-container {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 50;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 25px;
+            opacity: 0;
+            animation: fadeInMessage 0.8s ease forwards;
+        }
+
+        .movie-grid-wrapper h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .movie-grid {
+            display: grid;
+            /* Duas colunas em telas pequenas, o que é ideal para mobile */
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .movie-card {
+            position: relative;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            aspect-ratio: 2 / 3; /* Proporção clássica de pôster */
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 223, 154, 0.3);
+        }
+        
+        .movie-cover {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* --- AJUSTES DE RESPONSIVIDADE --- */
+        @media (max-width: 500px) {
+            .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
+            .control-button { top: 15px; }
+            .control-button.top-left { left: 15px; }
+            .control-button.top-right { right: 15px; }
+        }
+
     </style>
 </head>
 <body>
@@ -295,6 +335,13 @@
         </div>
 
         <div id="options-container" class="options-container"></div>
+
+        <div id="movie-selection-container" style="display: none;"></div>
+        
+        <div id="loading-screen" class="loading-screen-container" style="display: none;">
+            <video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
+            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>
+        </div>
     </div>
 
     <audio id="background-music" loop></audio> 
@@ -302,10 +349,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
         
+            // --- CONFIGURAÇÃO DA APLICAÇÃO ---
             const webhookURL = 'https://vendas-n8n.dttlw7.easypanel.host/webhook-test/filmes';
-            const finalRedirectURL = 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=sharing';
             const backgroundMusicPath = 'musica.mp3';
-        
+            const loadingVideoDuration = 30; // Duração em segundos do seu `video.mp4`
+            
+            // ✅ NOVO: Ponto central para configurar seus filmes.
+            // Substitua 'coverX.jpg' pelo caminho da imagem e a URL pelo seu link do Google Drive.
+            const movies = [
+                { cover: 'karate.jpg', link: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
+                { cover: 'cover2.jpg', link: 'COLOQUE_SEU_LINK_DO_GOOGLE_DRIVE_AQUI_2' },
+                { cover: 'cover3.jpg', link: 'COLOQUE_SEU_LINK_DO_GOOGLE_DRIVE_AQUI_3' },
+                { cover: 'cover4.jpg', link: 'COLOQUE_SEU_LINK_DO_GOOGLE_DRIVE_AQUI_4' }
+            ];
+            
             const validationRegex = {
                 name: /^[a-zA-ZáàãâéèêíìóòõôúùçÇÁÀÃÂÉÈÊÍÌÓÒÕÔÚÙ\s'-]{3,}$/,
                 phone: /^\(?(?:[1-9][0-9])\)?\s?9?\d{4,5}-?\d{4}$/,
@@ -320,7 +377,7 @@
                 { type: 'multiple-choice', name: "etapa_2_solucao", image: "imagem05.png", options: [ { text: "Conhecer pessoas novas que são apaixonadas pelos mesmos filmes que eu.", value: 2 }, { text: "Ter um jeito fácil de me conectar com meus amigos que moram longe.", value: 1 }, { text: "Participar de debates e descobrir filmes que eu não conheceria sozinho.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_3_disponibilidade", image: "imagem06.png", options: [ { text: "Uma sessão mais íntima e privada, com um pequeno grupo de amigos.", value: 2 }, { text: "Um grande evento online para um lançamento, com muita gente comentando.", value: 1 }, { text: "Um 'match' um a um, para um encontro de filme mais focado.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_4_investimento", image: "imagem07.png", options: [ { text: "Chat de texto para mandar reações e comentários rápidos.", value: 2 }, { text: "Foco total no filme, com os comentários e debates apenas no final.", value: 1 }, { text: "Chat de voz para sentir que estamos todos juntos no mesmo sofá.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha   'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
+                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha  'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_6_concorrencia", image: "imagem09.png", options: [ { text: "Saber na hora quem dos meus amigos está livre para ver um filme comigo.", value: 2 }, { text: "Um botão 'Me Surpreenda' que sempre escolhe o filme perfeito para o meu humor.", value: 1 }, { text: "Ver estatísticas e gráficos divertidos sobre todos os filmes que já assisti.", value: 0 } ] },
                 { type: 'multiple-choice', name: "etapa_7_decisao", image: "imagem10.png", options: [ { text: "Eu preciso disso para ontem! Onde eu me inscrevo?", value: 2 }, { text: "Parece uma ideia excelente, quero muito acompanhar de perto.", value: 1 }, { text: "É interessante, estou curioso(a) para ver como vai funcionar.", value: 0 } ] }
             ];
@@ -337,6 +394,11 @@
                 backBtn: document.getElementById('back-btn'),
                 audioBtn: document.getElementById('audio-btn'),
                 advanceBtn: document.getElementById('advance-btn'),
+                // --- NOVOS ELEMENTOS DA UI ---
+                movieSelectionContainer: document.getElementById('movie-selection-container'),
+                loadingScreen: document.getElementById('loading-screen'),
+                finalVideo: document.getElementById('final-loading-video'),
+                unmuteBtn: document.getElementById('unmute-video-btn')
             };
     
             let appState = 'JOURNEY';
@@ -345,10 +407,10 @@
             let isProcessing = false;
             let activeImage = ui.imageBg1;
             let inactiveImage = ui.imageBg2;
-            
             let imageHistory = [];
     
             const updateImage = (newSrc) => {
+                // ... (Função original sem modificações)
                 return new Promise(async (resolve) => {
                     const currentSrc = activeImage.src.split('/').pop();
                     const newSrcFileName = newSrc.split('/').pop();
@@ -378,6 +440,7 @@
             };
             
             const renderStep = async () => {
+                // ... (Função original sem modificações)
                 if (currentStepIndex >= journey.length) {
                     finishJourney();
                     return;
@@ -420,6 +483,7 @@
                 setTimeout(() => isProcessing = false, 200);
             };
     
+            // --- FUNÇÕES DA JORNADA (sem modificações) ---
             const handleTextInput = () => {
                 if (isProcessing) return;
                 const currentStep = journey[currentStepIndex];
@@ -448,7 +512,6 @@
             const goBack = async () => {
                 if (isProcessing || currentStepIndex === 0) return;
                 isProcessing = true;
-                
                 currentStepIndex--;
                 const previousStep = journey[currentStepIndex];
                 delete userAnswers[previousStep.name];
@@ -457,7 +520,6 @@
                     const previousImageSrc = imageHistory.pop();
                     await updateImage(previousImageSrc);
                 }
-                
                 renderStep();
             };
     
@@ -469,23 +531,81 @@
                 if (score >= 5) return "Morno";
                 return "Frio";
             };
-    
-            // ✅ FUNÇÃO TOTALMENTE RESTAURADA E CORRIGIDA
-            const finishJourney = async () => {
+            
+            // ✅ NOVA: Função para exibir a tela de seleção de filmes.
+            const renderMovieSelection = async () => {
+                await updateImage('imagem_final.png'); // Opcional: uma imagem de fundo para a tela de seleção
+                ui.movieSelectionContainer.style.display = 'flex';
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'movie-grid-wrapper';
+
+                const title = document.createElement('h2');
+                title.textContent = 'Missão Cumprida! Agora, escolha o seu filme:';
+                wrapper.appendChild(title);
+                
+                const grid = document.createElement('div');
+                grid.className = 'movie-grid';
+                
+                movies.forEach(movie => {
+                    const card = document.createElement('div');
+                    card.className = 'movie-card';
+                    card.onclick = () => playLoadingAndRedirect(movie.link);
+                    
+                    const cover = document.createElement('img');
+                    cover.className = 'movie-cover';
+                    cover.src = movie.cover;
+                    cover.alt = 'Capa do Filme';
+                    
+                    card.appendChild(cover);
+                    grid.appendChild(card);
+                });
+
+                wrapper.appendChild(grid);
+                ui.movieSelectionContainer.appendChild(wrapper);
+            };
+
+            // ✅ NOVA: Função para tocar o vídeo de loading e redirecionar para a URL escolhida.
+            const playLoadingAndRedirect = (url) => {
+                appState = 'LOADING';
+                ui.movieSelectionContainer.style.display = 'none';
+                ui.loadingScreen.style.display = 'flex';
+                
+                const playPromise = ui.finalVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        ui.finalVideo.classList.add('active');
+                    }).catch(error => {
+                        console.warn("Autoplay com som bloqueado. Tocando sem som.", error);
+                        ui.finalVideo.muted = true;
+                        ui.finalVideo.play();
+                        ui.finalVideo.classList.add('active');
+                        ui.unmuteBtn.style.display = 'block';
+                    });
+                }
+                
+                ui.unmuteBtn.addEventListener('click', () => {
+                    ui.finalVideo.muted = false;
+                    ui.unmuteBtn.style.display = 'none';
+                }, { once: true }); // Garante que o evento seja adicionado apenas uma vez
+
+                setTimeout(() => {
+                    window.location.href = url;
+                }, loadingVideoDuration * 1000);
+            };
+            
+            // ✅ FUNÇÃO ATUALIZADA: Agora transiciona para a seleção de filmes.
+            const finishJourney = () => {
                 isProcessing = true;
-                appState = 'FINISHED';
+                appState = 'MOVIE_SELECTION';
                 ui.backgroundMusic.pause();
                 ui.inputArea.style.display = 'none';
                 ui.optionsContainer.innerHTML = '';
-                activeImage.classList.remove('active');
-                inactiveImage.classList.remove('active');
                 ui.backBtn.style.display = 'none';
                 ui.audioBtn.style.display = 'none';
                 ui.messageContainer.innerHTML = '';
 
-                // --- OTIMIZAÇÃO APLICADA AQUI ---
-
-                // 1. Prepara os dados para envio.
+                // 1. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
                 const payload = {
                     nome: userAnswers.nome,
                     email: userAnswers.email,
@@ -498,65 +618,24 @@
                     }
                 });
 
-                // 2. AÇÃO PRINCIPAL: Mostrar o vídeo IMEDIATAMENTE.
-                // O código abaixo agora executa sem esperar pelo envio dos dados.
-                const loadingScreen = document.createElement('div');
-                loadingScreen.className = 'loading-screen-container';
-                loadingScreen.innerHTML = `<video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
-                                            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>`;
-                ui.interactionContainer.appendChild(loadingScreen);
-                
-                const finalVideo = document.getElementById('final-loading-video');
-                const unmuteBtn = document.getElementById('unmute-video-btn');
-
-                const playPromise = finalVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        finalVideo.classList.add('active');
-                    }).catch(error => {
-                        console.warn("Autoplay com som bloqueado. Tocando sem som e exibindo botão para ativar.", error);
-                        finalVideo.muted = true;
-                        finalVideo.play();
-                        finalVideo.classList.add('active');
-                        unmuteBtn.style.display = 'block';
-                    });
-                }
-                
-                unmuteBtn.addEventListener('click', () => {
-                    finalVideo.muted = false;
-                    unmuteBtn.style.display = 'none';
-                });
-
-                const totalDuration = 30;
-                setTimeout(() => {
-                    window.location.href = finalRedirectURL;
-                }, totalDuration * 1000);
-
-                // 3. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
-                // Removemos o "await" para não bloquear a exibição do vídeo.
                 fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Dados enviados com sucesso para o webhook em segundo plano!');
-                    } else {
-                        console.error('Webhook retornou um erro:', response.statusText);
-                    }
-                })
-                .catch(error => {
-                    // Apenas registramos o erro no console, sem impactar o usuário.
-                    console.error('Falha ao enviar dados em segundo plano:', error);
-                });
+                .then(response => console.log(response.ok ? 'Dados enviados com sucesso!' : 'Erro no webhook.'))
+                .catch(error => console.error('Falha ao enviar dados:', error));
+
+                // 2. AÇÃO PRINCIPAL: Mostrar a tela de seleção de filmes.
+                renderMovieSelection();
             };
             
             const openFullscreen = () => {
+                // ... (Função original sem modificações)
                 const elem = document.documentElement;
                 if (document.fullscreenElement) return;
                 if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(err => console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`));
+                    elem.requestFullscreen().catch(err => console.error(`Erro: ${err.message}`));
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
                 } else if (elem.mozRequestFullScreen) {
@@ -567,11 +646,12 @@
             };
             
             const init = async () => {
+                // ... (Função original sem modificações)
                 if (backgroundMusicPath) {
                     ui.backgroundMusic.src = backgroundMusicPath;
                     ui.backgroundMusic.volume = 0.2;
                 }
-                const imageSources = journey.map(step => step.image).filter(Boolean);
+                const imageSources = [...journey.map(step => step.image), ...movies.map(m => m.cover), 'imagem_final.png'].filter(Boolean);
                 const imagePromises = imageSources.map(src => new Promise((resolve) => {
                     const img = new Image(); img.src = src; img.onload = resolve; img.onerror = resolve;
                 }));
@@ -583,6 +663,7 @@
                 renderStep();
             };
             
+            // --- EVENT LISTENERS (sem modificações) ---
             ui.userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') handleTextInput();
             });
@@ -599,9 +680,9 @@
                 }
             });
             document.body.addEventListener('click', () => {
-                if (ui.backgroundMusic.paused && appState !== 'FINISHED') {
-                     ui.backgroundMusic.play().catch(() => {});
-                     ui.audioBtn.classList.remove('muted');
+                if (ui.backgroundMusic.paused && appState === 'JOURNEY') {
+                   ui.backgroundMusic.play().catch(() => {});
+                   ui.audioBtn.classList.remove('muted');
                 }
                 openFullscreen();
             }, { once: true });
@@ -610,6 +691,4 @@
         });
     </script>
 </body>
-
 </html>
-
