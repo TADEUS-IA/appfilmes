@@ -36,6 +36,97 @@
         
         body { display: flex; justify-content: center; align-items: center; }
         
+        /* NOVO: Estilos da tela de pré-carregamento */
+        #initial-loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--roxo-fundo); /* Cor de fundo que combina com o tema */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Garante que fique acima de tudo */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        #initial-loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner-container {
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateSpinner 2s infinite linear;
+        }
+
+        .spinner div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: var(--verde-neon);
+            border-bottom-color: var(--roxo-primario);
+            opacity: 0.8;
+        }
+
+        .spinner div:nth-child(1) {
+            transform: rotateY(0deg);
+        }
+        .spinner div:nth-child(2) {
+            transform: rotateY(60deg);
+            animation-delay: -0.2s;
+        }
+        .spinner div:nth-child(3) {
+            transform: rotateY(120deg);
+            animation-delay: -0.4s;
+        }
+        .spinner div:nth-child(4) {
+            transform: rotateY(180deg);
+            animation-delay: -0.6s;
+        }
+        .spinner div:nth-child(5) {
+            transform: rotateY(240deg);
+            animation-delay: -0.8s;
+        }
+        .spinner div:nth-child(6) {
+            transform: rotateY(300deg);
+            animation-delay: -1s;
+        }
+
+        @keyframes rotateSpinner {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        .loading-text {
+            color: var(--branco-texto);
+            font-size: 1.2rem;
+            font-weight: 500;
+            animation: pulseText 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        /* FIM: Estilos da tela de pré-carregamento */
+
+
         .interaction-container {
             width: 95vw;
             height: 90vh;
@@ -310,7 +401,19 @@
     </style>
 </head>
 <body>
-
+    <div id="initial-loading-screen">
+        <div class="spinner-container">
+            <div class="spinner">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <p class="loading-text">Carregando experiência...</p>
+    </div>
     <div id="interaction-container" class="interaction-container">
         
         <button id="back-btn" class="control-button top-left" style="display: none;" aria-label="Voltar">
@@ -398,7 +501,8 @@
                 movieSelectionContainer: document.getElementById('movie-selection-container'),
                 loadingScreen: document.getElementById('loading-screen'),
                 finalVideo: document.getElementById('final-loading-video'),
-                unmuteBtn: document.getElementById('unmute-video-btn')
+                unmuteBtn: document.getElementById('unmute-video-btn'),
+                initialLoadingScreen: document.getElementById('initial-loading-screen') // NOVO
             };
     
             let appState = 'JOURNEY';
@@ -408,17 +512,17 @@
             let activeImage = ui.imageBg1;
             let inactiveImage = ui.imageBg2;
             let imageHistory = [];
-    
+            
             const updateImage = (newSrc) => {
                 // ... (Função original sem modificações)
                 return new Promise(async (resolve) => {
                     const currentSrc = activeImage.src.split('/').pop();
                     const newSrcFileName = newSrc.split('/').pop();
-    
+        
                     if (!newSrc || currentSrc === newSrcFileName) {
                         return resolve();
                     }
-    
+        
                     inactiveImage.src = newSrc;
                     
                     await new Promise(imgResolve => {
@@ -428,9 +532,9 @@
                             imgResolve();
                         };
                     });
-    
+        
                     activeImage.classList.remove('active');
-    
+        
                     setTimeout(() => {
                         inactiveImage.classList.add('active');
                         [activeImage, inactiveImage] = [inactiveImage, activeImage];
@@ -645,22 +749,53 @@
                 }
             };
             
+            // 🔧 MODIFICADO: A função init agora esconde a tela de loading inicial ao final do carregamento.
             const init = async () => {
-                // ... (Função original sem modificações)
                 if (backgroundMusicPath) {
                     ui.backgroundMusic.src = backgroundMusicPath;
                     ui.backgroundMusic.volume = 0.2;
                 }
                 const imageSources = [...journey.map(step => step.image), ...movies.map(m => m.cover), 'imagem_final.png'].filter(Boolean);
-                const imagePromises = imageSources.map(src => new Promise((resolve) => {
-                    const img = new Image(); img.src = src; img.onload = resolve; img.onerror = resolve;
+                
+                // Incluir o vídeo no pré-carregamento também
+                const mediaSources = [
+                    ...imageSources, 
+                    ui.backgroundMusic.src, 
+                    ui.finalVideo.src
+                ].filter(Boolean);
+
+                const mediaPromises = mediaSources.map(src => new Promise((resolve) => {
+                    // Tenta carregar como imagem primeiro
+                    const img = new Image(); 
+                    img.src = src; 
+                    img.onload = resolve; 
+                    img.onerror = () => {
+                        // Se não for imagem, tenta como áudio ou vídeo (sem realmente tocar)
+                        if (src.endsWith('.mp3') || src.endsWith('.mp4')) {
+                            const media = document.createElement(src.endsWith('.mp3') ? 'audio' : 'video');
+                            media.src = src;
+                            media.onloadeddata = resolve;
+                            media.onerror = resolve; // Não queremos que um erro impeça o carregamento
+                            media.load(); // Apenas inicia o carregamento dos metadados
+                        } else {
+                            resolve(); // Resolve para qualquer outro tipo desconhecido
+                        }
+                    };
                 }));
-                await Promise.all(imagePromises);
+
+                await Promise.all(mediaPromises); // Espera que TODOS os recursos carreguem
+                
                 activeImage.src = journey[0].image;
                 await new Promise(resolve => setTimeout(resolve, 10));
                 activeImage.classList.add('active');
                 ui.interactionContainer.classList.add('visible');
                 renderStep();
+
+                // NOVO: Esconde a tela de loading inicial após tudo carregar
+                ui.initialLoadingScreen.classList.add('hidden');
+                ui.initialLoadingScreen.addEventListener('transitionend', () => {
+                    ui.initialLoadingScreen.style.display = 'none';
+                }, { once: true });
             };
             
             // --- EVENT LISTENERS (sem modificações) ---
@@ -692,8 +827,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
