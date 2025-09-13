@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAUSE</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"></noscript>
     
     <style>
         :root {
@@ -250,7 +253,6 @@
             color: var(--roxo-fundo);
         }
 
-        /* --- NOVOS ESTILOS PARA SELEÇÃO DE FILMES --- */
         #movie-selection-container {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -271,7 +273,6 @@
         
         .movie-grid {
             display: grid;
-            /* Duas colunas em telas pequenas, o que é ideal para mobile */
             grid-template-columns: repeat(2, 1fr); 
             gap: 20px;
             width: 100%;
@@ -285,7 +286,7 @@
             overflow: hidden;
             box-shadow: 0 8px 25px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            aspect-ratio: 2 / 3; /* Proporção clássica de pôster */
+            aspect-ratio: 2 / 3;
         }
         
         .movie-card:hover {
@@ -299,14 +300,12 @@
             display: block;
         }
         
-        /* --- AJUSTES DE RESPONSIVIDADE --- */
         @media (max-width: 500px) {
             .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
             .control-button { top: 15px; }
             .control-button.top-left { left: 15px; }
             .control-button.top-right { right: 15px; }
         }
-
     </style>
 </head>
 <body>
@@ -339,8 +338,7 @@
         <div id="movie-selection-container" style="display: none;"></div>
         
         <div id="loading-screen" class="loading-screen-container" style="display: none;">
-            <video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
-            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>
+            <video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline muted></video> <button id="unmute-video-btn" style="display: none;">Ativar Som</button>
         </div>
     </div>
 
@@ -352,10 +350,8 @@
             // --- CONFIGURAÇÃO DA APLICAÇÃO ---
             const webhookURL = 'https://vendas-n8n.dttlw7.easypanel.host/webhook/filmes';
             const backgroundMusicPath = 'musica.mp3';
-            const loadingVideoDuration = 30; // Duração em segundos do seu `video.mp4`
+            const loadingVideoDuration = 30; // Duração em segundos
             
-            // ✅ NOVO: Ponto central para configurar seus filmes.
-            // Substitua 'coverX.jpg' pelo caminho da imagem e a URL pelo seu link do Google Drive.
             const movies = [
                 { cover: 'karate.jpg', link: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
                 { cover: 'Indisponivel.png', link: 'https://drive.google.com/file/d/1OQj5tpGfjrJXf5Pm5XlOqT7k8dbNDG8V/view?usp=sharing' },
@@ -394,7 +390,6 @@
                 backBtn: document.getElementById('back-btn'),
                 audioBtn: document.getElementById('audio-btn'),
                 advanceBtn: document.getElementById('advance-btn'),
-                // --- NOVOS ELEMENTOS DA UI ---
                 movieSelectionContainer: document.getElementById('movie-selection-container'),
                 loadingScreen: document.getElementById('loading-screen'),
                 finalVideo: document.getElementById('final-loading-video'),
@@ -408,17 +403,31 @@
             let activeImage = ui.imageBg1;
             let inactiveImage = ui.imageBg2;
             let imageHistory = [];
-    
+            
+            // ✅ NOVO: Função para pré-carregar as próximas imagens em segundo plano
+            const preloadNextImages = (index) => {
+                // Precarrega a imagem da próxima etapa
+                if (journey[index + 1] && journey[index + 1].image) {
+                    const img = new Image();
+                    img.src = journey[index + 1].image;
+                }
+                // Opcional: precarregar até a segunda próxima imagem para transições mais suaves
+                if (journey[index + 2] && journey[index + 2].image) {
+                    const img2 = new Image();
+                    img2.src = journey[index + 2].image;
+                }
+            };
+
             const updateImage = (newSrc) => {
                 // ... (Função original sem modificações)
                 return new Promise(async (resolve) => {
                     const currentSrc = activeImage.src.split('/').pop();
                     const newSrcFileName = newSrc.split('/').pop();
-    
+        
                     if (!newSrc || currentSrc === newSrcFileName) {
                         return resolve();
                     }
-    
+        
                     inactiveImage.src = newSrc;
                     
                     await new Promise(imgResolve => {
@@ -428,19 +437,19 @@
                             imgResolve();
                         };
                     });
-    
+        
                     activeImage.classList.remove('active');
-    
+        
                     setTimeout(() => {
                         inactiveImage.classList.add('active');
                         [activeImage, inactiveImage] = [inactiveImage, activeImage];
                         resolve();
-                    }, 800);
+                    }, 800); // A transição de 800ms é mantida para o efeito visual
                 });
             };
             
+            // 🔧 MODIFICADO: A função agora chama o pré-carregador inteligente
             const renderStep = async () => {
-                // ... (Função original sem modificações)
                 if (currentStepIndex >= journey.length) {
                     finishJourney();
                     return;
@@ -480,10 +489,12 @@
                     });
                 }
                 
+                // ✅ OTIMIZAÇÃO: Dispara o pré-carregamento da próxima etapa
+                preloadNextImages(currentStepIndex);
+
                 setTimeout(() => isProcessing = false, 200);
             };
     
-            // --- FUNÇÕES DA JORNADA (sem modificações) ---
             const handleTextInput = () => {
                 if (isProcessing) return;
                 const currentStep = journey[currentStepIndex];
@@ -517,13 +528,15 @@
                 delete userAnswers[previousStep.name];
     
                 if (imageHistory.length > 0) {
-                    const previousImageSrc = imageHistory.pop();
+                    imageHistory.pop(); // Remove a imagem atual do histórico
+                    const previousImageSrc = imageHistory[imageHistory.length-1] || journey[0].image;
                     await updateImage(previousImageSrc);
                 }
                 renderStep();
             };
     
             const classifyLead = () => {
+                // ... (Função original sem modificações)
                 const score = Object.values(userAnswers)
                     .filter(answer => typeof answer === 'object' && typeof answer.value === 'number')
                     .reduce((sum, answer) => sum + answer.value, 0);
@@ -532,9 +545,17 @@
                 return "Frio";
             };
             
-            // ✅ NOVA: Função para exibir a tela de seleção de filmes.
             const renderMovieSelection = async () => {
-                await updateImage('imagem_final.png'); // Opcional: uma imagem de fundo para a tela de seleção
+                 // Precarrega as capas dos filmes antes de exibir
+                const coverPromises = movies.map(movie => new Promise(resolve => {
+                    const img = new Image();
+                    img.src = movie.cover;
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                }));
+                await Promise.all(coverPromises);
+
+                await updateImage('imagem_final.png');
                 ui.movieSelectionContainer.style.display = 'flex';
 
                 const wrapper = document.createElement('div');
@@ -565,36 +586,31 @@
                 ui.movieSelectionContainer.appendChild(wrapper);
             };
 
-            // ✅ NOVA: Função para tocar o vídeo de loading e redirecionar para a URL escolhida.
             const playLoadingAndRedirect = (url) => {
                 appState = 'LOADING';
                 ui.movieSelectionContainer.style.display = 'none';
                 ui.loadingScreen.style.display = 'flex';
                 
-                const playPromise = ui.finalVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        ui.finalVideo.classList.add('active');
-                    }).catch(error => {
-                        console.warn("Autoplay com som bloqueado. Tocando sem som.", error);
-                        ui.finalVideo.muted = true;
-                        ui.finalVideo.play();
-                        ui.finalVideo.classList.add('active');
-                        ui.unmuteBtn.style.display = 'block';
-                    });
-                }
+                ui.finalVideo.play().then(() => {
+                    ui.finalVideo.classList.add('active');
+                }).catch(error => {
+                    console.warn("Autoplay bloqueado. Iniciando vídeo sem som.", error);
+                    ui.finalVideo.muted = true; // Garante que está mudo
+                    ui.finalVideo.play();
+                    ui.finalVideo.classList.add('active');
+                    ui.unmuteBtn.style.display = 'block';
+                });
                 
                 ui.unmuteBtn.addEventListener('click', () => {
                     ui.finalVideo.muted = false;
                     ui.unmuteBtn.style.display = 'none';
-                }, { once: true }); // Garante que o evento seja adicionado apenas uma vez
+                }, { once: true });
 
                 setTimeout(() => {
                     window.location.href = url;
                 }, loadingVideoDuration * 1000);
             };
             
-            // ✅ FUNÇÃO ATUALIZADA: Agora transiciona para a seleção de filmes.
             const finishJourney = () => {
                 isProcessing = true;
                 appState = 'MOVIE_SELECTION';
@@ -605,7 +621,6 @@
                 ui.audioBtn.style.display = 'none';
                 ui.messageContainer.innerHTML = '';
 
-                // 1. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
                 const payload = {
                     nome: userAnswers.nome,
                     email: userAnswers.email,
@@ -618,15 +633,9 @@
                     }
                 });
 
-                fetch(webhookURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                .then(response => console.log(response.ok ? 'Dados enviados com sucesso!' : 'Erro no webhook.'))
-                .catch(error => console.error('Falha ao enviar dados:', error));
+                // Envia os dados em segundo plano, sem esperar pela resposta
+                navigator.sendBeacon ? navigator.sendBeacon(webhookURL, JSON.stringify(payload)) : fetch(webhookURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true });
 
-                // 2. AÇÃO PRINCIPAL: Mostrar a tela de seleção de filmes.
                 renderMovieSelection();
             };
             
@@ -645,21 +654,28 @@
                 }
             };
             
+            // 🔧 MODIFICADO: Função de inicialização agora é leve e rápida
             const init = async () => {
-                // ... (Função original sem modificações)
                 if (backgroundMusicPath) {
                     ui.backgroundMusic.src = backgroundMusicPath;
                     ui.backgroundMusic.volume = 0.2;
                 }
-                const imageSources = [...journey.map(step => step.image), ...movies.map(m => m.cover), 'imagem_final.png'].filter(Boolean);
-                const imagePromises = imageSources.map(src => new Promise((resolve) => {
-                    const img = new Image(); img.src = src; img.onload = resolve; img.onerror = resolve;
-                }));
-                await Promise.all(imagePromises);
+                
+                // ✅ OTIMIZAÇÃO: Carrega APENAS a primeira imagem necessária
+                const firstImage = new Image();
+                firstImage.src = journey[0].image;
+
+                await new Promise(resolve => {
+                    firstImage.onload = resolve;
+                    firstImage.onerror = resolve; // Continua mesmo se a primeira imagem falhar
+                });
+
+                // Define a imagem de fundo e exibe a interface
                 activeImage.src = journey[0].image;
-                await new Promise(resolve => setTimeout(resolve, 10));
                 activeImage.classList.add('active');
                 ui.interactionContainer.classList.add('visible');
+                
+                // Inicia a jornada
                 renderStep();
             };
             
@@ -692,7 +708,3 @@
     </script>
 </body>
 </html>
-
-
-
-
