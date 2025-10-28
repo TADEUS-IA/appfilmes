@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAUSE</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    
+
     <style>
         :root {
             --roxo-fundo: #10101A;
@@ -22,9 +22,9 @@
             --vermelho-erro: #e74c3c;
             --font-family: 'Lexend', sans-serif;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         html, body {
             height: 100%;
             width: 100%;
@@ -33,22 +33,22 @@
             background: var(--roxo-fundo);
             color: var(--branco-texto);
         }
-        
+
         body { display: flex; justify-content: center; align-items: center; }
-        
-        /* NOVO: Estilos da tela de pré-carregamento */
+
+        /* Estilos da tela de pré-carregamento */
         #initial-loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--roxo-fundo); /* Cor de fundo que combina com o tema */
+            background-color: var(--roxo-fundo);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* Garante que fique acima de tudo */
+            z-index: 9999;
             opacity: 1;
             visibility: visible;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
@@ -83,29 +83,12 @@
             opacity: 0.8;
         }
 
-        .spinner div:nth-child(1) {
-            transform: rotateY(0deg);
-        }
-        .spinner div:nth-child(2) {
-            transform: rotateY(60deg);
-            animation-delay: -0.2s;
-        }
-        .spinner div:nth-child(3) {
-            transform: rotateY(120deg);
-            animation-delay: -0.4s;
-        }
-        .spinner div:nth-child(4) {
-            transform: rotateY(180deg);
-            animation-delay: -0.6s;
-        }
-        .spinner div:nth-child(5) {
-            transform: rotateY(240deg);
-            animation-delay: -0.8s;
-        }
-        .spinner div:nth-child(6) {
-            transform: rotateY(300deg);
-            animation-delay: -1s;
-        }
+        .spinner div:nth-child(1) { transform: rotateY(0deg); }
+        .spinner div:nth-child(2) { transform: rotateY(60deg); animation-delay: -0.2s; }
+        .spinner div:nth-child(3) { transform: rotateY(120deg); animation-delay: -0.4s; }
+        .spinner div:nth-child(4) { transform: rotateY(180deg); animation-delay: -0.6s; }
+        .spinner div:nth-child(5) { transform: rotateY(240deg); animation-delay: -0.8s; }
+        .spinner div:nth-child(6) { transform: rotateY(300deg); animation-delay: -1s; }
 
         @keyframes rotateSpinner {
             0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
@@ -142,17 +125,17 @@
             opacity: 0;
             transition: opacity 1s ease-out;
         }
-        
+
         .interaction-container.visible {
             opacity: 1;
         }
-        
+
         .media-container {
             position: relative;
             flex: 1;
             background-color: #000;
         }
-        
+
         .background-image {
             position: absolute;
             top: 0; left: 0;
@@ -161,18 +144,18 @@
             opacity: 0;
             transition: opacity 0.8s ease-in-out;
         }
-        
+
         .background-image.active {
             opacity: 1;
         }
-        
+
         .media-overlay {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             background: linear-gradient(to top, rgba(24, 24, 40, 0.95) 0%, rgba(24, 24, 40, 0.6) 35%, transparent 65%);
             pointer-events: none;
         }
-        
+
         .control-button {
             position: absolute; top: 20px;
             background: rgba(0, 0, 0, 0.4);
@@ -185,7 +168,7 @@
             cursor: pointer; z-index: 60;
             transition: all 0.3s ease;
         }
-        
+
         .control-button.top-left { left: 20px; }
         .control-button.top-right { right: 20px; }
         .control-button:hover { background: var(--roxo-primario); transform: scale(1.1); }
@@ -194,7 +177,7 @@
             transform: rotate(15deg) translateX(1px);
             font-weight: 600;
         }
-        
+
         .message-container {
             position: absolute;
             bottom: 120px;
@@ -203,7 +186,7 @@
             text-align: center;
             pointer-events: none;
         }
-        
+
         .bot-message {
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
@@ -217,17 +200,17 @@
             transform: translateY(20px);
             animation: fadeInMessage 0.6s ease forwards;
         }
-        
+
         @keyframes fadeInMessage {
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .input-area {
             position: absolute; bottom: 0; left: 0;
             width: 100%; padding: 25px; z-index: 30;
             display: flex; align-items: center; gap: 10px;
         }
-        
+
         #user-input {
             flex: 1;
             background: rgba(255, 255, 255, 0.1);
@@ -237,17 +220,17 @@
             text-align: center; font-size: 1.1rem;
             outline: none; transition: all 0.3s ease;
         }
-        
+
         #user-input:focus {
             border-color: var(--verde-neon);
             background: rgba(0, 223, 154, 0.1);
         }
-        
+
         #user-input.error {
             border-color: var(--vermelho-erro);
             animation: shake 0.5s;
         }
-        
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -264,19 +247,19 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         #advance-btn:hover {
             opacity: 0.8;
             transform: scale(1.03);
         }
-        
+
         .options-container {
             position: absolute; bottom: 0; left: 0;
             width: 100%; padding: 25px;
             display: flex; flex-direction: column;
             gap: 15px; z-index: 20;
         }
-        
+
         .option-btn {
             width: 100%; background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -288,108 +271,15 @@
             opacity: 0; transform: translateY(20px);
             animation: fadeInButton 0.5s ease forwards;
         }
-        
+
         @keyframes fadeInButton {
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .option-btn:hover { background: var(--verde-neon); color: var(--roxo-fundo); border-color: var(--verde-neon); transform: scale(1.03); }
-        
-        .loading-screen-container {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #000;
-            z-index: 100;
-            opacity: 0;
-            animation: fadeInMessage 0.5s ease forwards;
-        }
-        
-        .loading-video {
-            width: 100%; height: 100%;
-            object-fit: contain; 
-            display: none;
-        }
-        
-        .loading-video.active {
-            display: block;
-        }
-        
-        #unmute-video-btn {
-            position: absolute;
-            bottom: 25px; left: 50%;
-            transform: translateX(-50%);
-            z-index: 110;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--branco-texto);
-            padding: 12px 25px; border-radius: 50px;
-            font-family: var(--font-family);
-            font-size: 0.9rem; font-weight: 500;
-            cursor: pointer; transition: all 0.3s ease;
-            opacity: 0;
-            animation: fadeInButton 1s 1s ease forwards;
-            display: none;
-        }
 
-        #unmute-video-btn:hover {
-            background: var(--verde-neon);
-            color: var(--roxo-fundo);
-        }
+        /* ❌ REMOVIDO: Estilos específicos da tela de seleção de filmes não são mais necessários */
 
-        /* --- NOVOS ESTILOS PARA SELEÇÃO DE FILMES --- */
-        #movie-selection-container {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 50;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            padding: 25px;
-            opacity: 0;
-            animation: fadeInMessage 0.8s ease forwards;
-        }
-
-        .movie-grid-wrapper h2 {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-        
-        .movie-grid {
-            display: grid;
-            /* Duas colunas em telas pequenas, o que é ideal para mobile */
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 20px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .movie-card {
-            position: relative;
-            cursor: pointer;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            aspect-ratio: 2 / 3; /* Proporção clássica de pôster */
-        }
-        
-        .movie-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(0, 223, 154, 0.3);
-        }
-        
-        .movie-cover {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
         /* --- AJUSTES DE RESPONSIVIDADE --- */
         @media (max-width: 500px) {
             .interaction-container { border-radius: 0; width: 100%; height: 100%; max-width: none; max-height: none;}
@@ -404,18 +294,13 @@
     <div id="initial-loading-screen">
         <div class="spinner-container">
             <div class="spinner">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+                <div></div><div></div><div></div><div></div><div></div><div></div>
             </div>
         </div>
         <p class="loading-text">Carregando experiência...</p>
     </div>
     <div id="interaction-container" class="interaction-container">
-        
+
         <button id="back-btn" class="control-button top-left" style="display: none;" aria-label="Voltar">
             <i class="fas fa-arrow-left"></i>
         </button>
@@ -425,13 +310,13 @@
         </button>
 
         <div class="media-container">
-            <img id="image-bg-1" class="background-image" src="" alt="Contexto visual da etapa">
-            <img id="image-bg-2" class="background-image" src="" alt="Contexto visual da etapa">
+            <img id="image-bg-1" class="background-image" src="" alt="">
+            <img id="image-bg-2" class="background-image" src="" alt="">
             <div class="media-overlay"></div>
         </div>
 
         <div id="message-container" class="message-container"></div>
-        
+
         <div id="input-area" class="input-area" style="display: none;">
             <input type="text" id="user-input" autocomplete="off" aria-label="Sua resposta">
             <button id="advance-btn" style="display: none;"><i class="fas fa-arrow-right"></i></button>
@@ -439,52 +324,46 @@
 
         <div id="options-container" class="options-container"></div>
 
-        <div id="movie-selection-container" style="display: none;"></div>
-        
-        <div id="loading-screen" class="loading-screen-container" style="display: none;">
-            <video src="video.mp4" id="final-loading-video" class="loading-video" loop playsinline></video>
-            <button id="unmute-video-btn" style="display: none;">Ativar Som</button>
         </div>
-    </div>
 
-    <audio id="background-music" loop></audio> 
-    
+    <audio id="background-music" loop></audio>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        
+
             // --- CONFIGURAÇÃO DA APLICAÇÃO ---
-            const webhookURL = 'https://vendas-n8n.dttlw7.easypanel.host/webhook/filmes';
+            const webhookURL = 'https://automacoe-n8n.bitxsu.easypanel.host/webhook-test/filmes';
+
+            // ✅ URL do seu Google Apps Script Web App (Mantida)
+            const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycbzZYQDN10XqpsMUHueOXxgZe4dO37XAj-vpWUBz1IJQnbE8tR3MoJjlSVuw5ZsiodrL/exec';
+
+            // ✅ ALTERAÇÃO: Defina aqui a URL para onde o usuário será redirecionado após finalizar
+            const finalRedirectURL = 'https://tadeus-ia.github.io/appdefilmespause/'; // <--- SUBSTITUA PELA SUA URL FINAL
+
             const backgroundMusicPath = 'musica.mp3';
-            const loadingVideoDuration = 30; // Duração em segundos do seu `video.mp4`
-            
-            // ✅ NOVO: Ponto central para configurar seus filmes.
-            // Substitua 'coverX.jpg' pelo caminho da imagem e a URL pelo seu link do Google Drive.
-            const movies = [
-                { cover: 'karate.jpg', link: 'https://drive.google.com/file/d/1BKrnqryfyJmaMnD6Wv6MUEthSnnaLEfB/view?usp=drive_link' },
-                { cover: 'Indisponivel.png', link: 'https://drive.google.com/file/d/1OQj5tpGfjrJXf5Pm5XlOqT7k8dbNDG8V/view?usp=sharing' },
-                { cover: 'Indisponivel.png', link: 'https://drive.google.com/file/d/1t87XurtJutJK0mYXDaQe_kv5bJpezX49/view?usp=sharing' },
-                { cover: 'Indisponivel.png', link: 'https://drive.google.com/file/d/1oZiLslJpsa-sEMEBo80TFLEzsEqdsG7O/view?usp=sharing' }
-            ];
-            
+
+            // ❌ REMOVIDO: Constante `movies` não é mais necessária
+            // ❌ REMOVIDO: Constante `loadingVideoDuration` não é mais necessária
+
             const validationRegex = {
                 name: /^[a-zA-ZáàãâéèêíìóòõôúùçÇÁÀÃÂÉÈÊÍÌÓÒÕÔÚÙ\s'-]{3,}$/,
                 phone: /^\(?(?:[1-9][0-9])\)?\s?9?\d{4,5}-?\d{4}$/,
                 email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             };
-            
+
             const journey = [
-                { type: 'multiple-choice', name: "etapa_1_engajamento", image: "imagem01.png", options: [ { text: "Achar alguém com exatamente o mesmo gosto que eu.", value: 2 }, { text: "Conseguir combinar um horário com meus amigos.", value: 1 }, { text: "Decidir qual filme assistir no meio de tantas opções.", value: 0 } ] },
-                { type: 'text-input', name: 'nome', image: 'imagem02.png', question: 'Entendido. Para continuarmos, qual seu nome?', validation: validationRegex.name },
-                { type: 'text-input', name: 'email', image: 'imagem03.png', question: 'Obrigado. Agora, seu melhor e-mail.', validation: validationRegex.email },
-                { type: 'text-input', name: 'telefone', image: 'imagem04.png', question: 'Perfeito. E para finalizar, seu telefone.', validation: validationRegex.phone },
-                { type: 'multiple-choice', name: "etapa_2_solucao", image: "imagem05.png", options: [ { text: "Conhecer pessoas novas que são apaixonadas pelos mesmos filmes que eu.", value: 2 }, { text: "Ter um jeito fácil de me conectar com meus amigos que moram longe.", value: 1 }, { text: "Participar de debates e descobrir filmes que eu não conheceria sozinho.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_3_disponibilidade", image: "imagem06.png", options: [ { text: "Uma sessão mais íntima e privada, com um pequeno grupo de amigos.", value: 2 }, { text: "Um grande evento online para um lançamento, com muita gente comentando.", value: 1 }, { text: "Um 'match' um a um, para um encontro de filme mais focado.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_4_investimento", image: "imagem07.png", options: [ { text: "Chat de texto para mandar reações e comentários rápidos.", value: 2 }, { text: "Foco total no filme, com os comentários e debates apenas no final.", value: 1 }, { text: "Chat de voz para sentir que estamos todos juntos no mesmo sofá.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.png", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha  'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_6_concorrencia", image: "imagem09.png", options: [ { text: "Saber na hora quem dos meus amigos está livre para ver um filme comigo.", value: 2 }, { text: "Um botão 'Me Surpreenda' que sempre escolhe o filme perfeito para o meu humor.", value: 1 }, { text: "Ver estatísticas e gráficos divertidos sobre todos os filmes que já assisti.", value: 0 } ] },
-                { type: 'multiple-choice', name: "etapa_7_decisao", image: "imagem10.png", options: [ { text: "Eu preciso disso para ontem! Onde eu me inscrevo?", value: 2 }, { text: "Parece uma ideia excelente, quero muito acompanhar de perto.", value: 1 }, { text: "É interessante, estou curioso(a) para ver como vai funcionar.", value: 0 } ] }
+                 { type: 'multiple-choice', name: "etapa_1_engajamento", image: "imagem01.jpg", options: [ { text: "Achar alguém com exatamente o mesmo gosto que eu.", value: 2 }, { text: "Conseguir combinar um horário com meus amigos.", value: 1 }, { text: "Decidir qual filme assistir no meio de tantas opções.", value: 0 } ] },
+                 { type: 'text-input', name: 'nome', image: 'imagem02.jpg', question: 'Ok! Como se chama?', validation: validationRegex.name },
+                 { type: 'text-input', name: 'email', image: 'imagem03.jpg', question: 'Seu melhor e-mail.', validation: validationRegex.email },
+                 { type: 'text-input', name: 'telefone', image: 'imagem04.jpg', question: 'Seu,telefone porfavor.', validation: validationRegex.phone },
+                 { type: 'multiple-choice', name: "etapa_2_solucao", image: "imagem05.jpg", options: [ { text: "Conhecer pessoas novas que são apaixonadas pelos mesmos filmes que eu.", value: 2 }, { text: "Ter um jeito fácil de me conectar com meus amigos que moram longe.", value: 1 }, { text: "Participar de debates e descobrir filmes que eu não conheceria sozinho.", value: 0 } ] },
+                 { type: 'multiple-choice', name: "etapa_3_disponibilidade", image: "imagem06.jpg", options: [ { text: "Uma sessão mais íntima e privada, com um pequeno grupo de amigos.", value: 2 }, { text: "Um grande evento online para um lançamento, com muita gente comentando.", value: 1 }, { text: "Um 'match' um a um, para um encontro de filme mais focado.", value: 0 } ] },
+                 { type: 'multiple-choice', name: "etapa_4_investimento", image: "imagem07.jpg", options: [ { text: "Chat de texto para mandar reações e comentários rápidos.", value: 2 }, { text: "Foco total no filme, com os comentários e debates apenas no final.", value: 1 }, { text: "Chat de voz para sentir que estamos todos juntos no mesmo sofá.", value: 0 } ] },
+                 { type: 'multiple-choice', name: "etapa_5_implementacao", image: "imagem08.jpg", options: [ { text: "Sessões com debates mediados por críticos ou especialistas no assunto.", value: 2 }, { text: "Um sistema de recomendação super inteligente para achar minha  'alma gêmea' de filmes.", value: 1 }, { text: "Acesso exclusivo a um catálogo de filmes clássicos ou difíceis de encontrar.", value: 0 } ] },
+                 { type: 'multiple-choice', name: "etapa_6_concorrencia", image: "imagem09.jpg", options: [ { text: "Saber na hora quem dos meus amigos está livre para ver um filme comigo.", value: 2 }, { text: "Um botão 'Me Surpreenda' que sempre escolhe o filme perfeito para o meu humor.", value: 1 }, { text: "Ver estatísticas e gráficos divertidos sobre todos os filmes que já assisti.", value: 0 } ] },
+                 { type: 'multiple-choice', name: "etapa_7_decisao", image: "imagem10.jpg", options: [ { text: "Eu preciso disso para ontem! Onde eu me inscrevo?", value: 2 }, { text: "Parece uma ideia excelente, quero muito acompanhar de perto.", value: 1 }, { text: "É interessante, estou curioso(a) para ver como vai funcionar.", value: 0 } ] }
             ];
-            
+
             const ui = {
                 interactionContainer: document.getElementById('interaction-container'),
                 messageContainer: document.getElementById('message-container'),
@@ -497,54 +376,50 @@
                 backBtn: document.getElementById('back-btn'),
                 audioBtn: document.getElementById('audio-btn'),
                 advanceBtn: document.getElementById('advance-btn'),
-                // --- NOVOS ELEMENTOS DA UI ---
-                movieSelectionContainer: document.getElementById('movie-selection-container'),
-                loadingScreen: document.getElementById('loading-screen'),
-                finalVideo: document.getElementById('final-loading-video'),
-                unmuteBtn: document.getElementById('unmute-video-btn'),
-                initialLoadingScreen: document.getElementById('initial-loading-screen') // NOVO
+                // ❌ REMOVIDO: Referências a elementos de seleção de filme e loading final
+                initialLoadingScreen: document.getElementById('initial-loading-screen')
             };
-    
-            let appState = 'JOURNEY';
+
+            let appState = 'JOURNEY'; // Estado inicial
             let currentStepIndex = 0;
             let userAnswers = {};
             let isProcessing = false;
             let activeImage = ui.imageBg1;
             let inactiveImage = ui.imageBg2;
             let imageHistory = [];
-            
+
             const updateImage = (newSrc) => {
                 // ... (Função original sem modificações)
-                return new Promise(async (resolve) => {
-                    const currentSrc = activeImage.src.split('/').pop();
-                    const newSrcFileName = newSrc.split('/').pop();
-        
-                    if (!newSrc || currentSrc === newSrcFileName) {
-                        return resolve();
-                    }
-        
-                    inactiveImage.src = newSrc;
-                    
-                    await new Promise(imgResolve => {
-                        inactiveImage.onload = imgResolve;
-                        inactiveImage.onerror = () => {
-                            console.error(`ERRO: Não foi possível carregar a imagem "${newSrc}".`);
-                            imgResolve();
-                        };
-                    });
-        
-                    activeImage.classList.remove('active');
-        
-                    setTimeout(() => {
-                        inactiveImage.classList.add('active');
-                        [activeImage, inactiveImage] = [inactiveImage, activeImage];
-                        resolve();
-                    }, 800);
-                });
+                 return new Promise(async (resolve) => {
+                       const currentSrc = activeImage.src.split('/').pop();
+                       const newSrcFileName = newSrc.split('/').pop();
+
+                       if (!newSrc || currentSrc === newSrcFileName) {
+                           return resolve();
+                       }
+
+                       inactiveImage.src = newSrc;
+
+                       await new Promise(imgResolve => {
+                           inactiveImage.onload = imgResolve;
+                           inactiveImage.onerror = () => {
+                               console.error(`ERRO: Não foi possível carregar a imagem "${newSrc}".`);
+                               imgResolve();
+                           };
+                       });
+
+                       activeImage.classList.remove('active');
+
+                       setTimeout(() => {
+                           inactiveImage.classList.add('active');
+                           [activeImage, inactiveImage] = [inactiveImage, activeImage];
+                           resolve();
+                       }, 800);
+                   });
             };
-            
+
             const renderStep = async () => {
-                // ... (Função original sem modificações)
+                // Função modificada para não referenciar elementos removidos
                 if (currentStepIndex >= journey.length) {
                     finishJourney();
                     return;
@@ -552,28 +427,44 @@
                 isProcessing = true;
                 appState = 'JOURNEY';
                 const currentStep = journey[currentStepIndex];
-    
+
                 ui.backBtn.style.display = currentStepIndex > 0 ? 'flex' : 'none';
                 ui.audioBtn.style.display = 'flex';
-                
+
                 await updateImage(currentStep.image);
-                
+
                 ui.messageContainer.innerHTML = '';
                 ui.optionsContainer.innerHTML = '';
                 ui.inputArea.style.display = 'none';
                 ui.advanceBtn.style.display = 'none';
+                 // ❌ REMOVIDO: Garantir que elementos removidos não sejam mostrados
 
                 if (currentStep.type === 'text-input') {
                     ui.inputArea.style.display = 'flex';
                     ui.userInput.value = userAnswers[currentStep.name] || '';
                     ui.userInput.classList.remove('error');
+
+                    let questionText = currentStep.question;
+                    const userName = userAnswers.nome;
+
+                    if (currentStep.name === 'email' && userName) {
+                        questionText = `Ok seu melhor e-mail, ${userName}?`;
+                    }
+                    else if (currentStep.name === 'telefone' && userName) {
+                        questionText = `Seu telefone Por Favor, ${userName}.`;
+                    }
+
+                    ui.userInput.placeholder = questionText;
                     ui.userInput.focus();
                     ui.advanceBtn.style.display = 'flex';
-                    const msgEl = document.createElement('div');
-                    msgEl.className = 'bot-message';
-                    msgEl.textContent = currentStep.question;
-                    ui.messageContainer.appendChild(msgEl);
+
                 } else if (currentStep.type === 'multiple-choice') {
+                    if (currentStep.question) {
+                        const msgEl = document.createElement('div');
+                        msgEl.className = 'bot-message';
+                        msgEl.textContent = currentStep.question;
+                        ui.messageContainer.appendChild(msgEl);
+                    }
                     currentStep.options.forEach((option, index) => {
                         const button = document.createElement('button');
                         button.className = 'option-btn';
@@ -583,12 +474,12 @@
                         ui.optionsContainer.appendChild(button);
                     });
                 }
-                
+
                 setTimeout(() => isProcessing = false, 200);
             };
-    
-            // --- FUNÇÕES DA JORNADA (sem modificações) ---
+
             const handleTextInput = () => {
+                // ... (Função original sem modificações)
                 if (isProcessing) return;
                 const currentStep = journey[currentStepIndex];
                 const answer = ui.userInput.value.trim();
@@ -599,35 +490,42 @@
                 }
                 isProcessing = true;
                 userAnswers[currentStep.name] = answer;
-                imageHistory.push(journey[currentStepIndex].image);
+                imageHistory.push(journey[currentStepIndex].image); // Salva imagem atual antes de avançar
                 currentStepIndex++;
                 renderStep();
             };
-            
+
             const handleChoice = (option, stepName) => {
-                if (isProcessing) return;
-                isProcessing = true;
-                userAnswers[stepName] = { text: option.text, value: option.value };
-                imageHistory.push(journey[currentStepIndex].image);
-                currentStepIndex++;
-                renderStep();
+                // ... (Função original sem modificações)
+                 if (isProcessing) return;
+                 isProcessing = true;
+                 userAnswers[stepName] = { text: option.text, value: option.value };
+                 imageHistory.push(journey[currentStepIndex].image); // Salva imagem atual antes de avançar
+                 currentStepIndex++;
+                 renderStep();
             };
-    
-            const goBack = async () => {
-                if (isProcessing || currentStepIndex === 0) return;
-                isProcessing = true;
-                currentStepIndex--;
-                const previousStep = journey[currentStepIndex];
-                delete userAnswers[previousStep.name];
-    
-                if (imageHistory.length > 0) {
-                    const previousImageSrc = imageHistory.pop();
-                    await updateImage(previousImageSrc);
-                }
-                renderStep();
+
+             const goBack = async () => {
+                // ... (Função original sem modificações)
+                 if (isProcessing || currentStepIndex === 0) return;
+                 isProcessing = true;
+                 currentStepIndex--;
+                 const previousStep = journey[currentStepIndex];
+                 delete userAnswers[previousStep.name]; // Remove a resposta do passo anterior
+
+                 if (imageHistory.length > 0) {
+                      imageHistory.pop();
+                 }
+
+                 const targetImageSrc = journey[currentStepIndex].image;
+                 await updateImage(targetImageSrc);
+
+                 renderStep();
             };
-    
+
+
             const classifyLead = () => {
+                // ... (Função original sem modificações)
                 const score = Object.values(userAnswers)
                     .filter(answer => typeof answer === 'object' && typeof answer.value === 'number')
                     .reduce((sum, answer) => sum + answer.value, 0);
@@ -635,73 +533,14 @@
                 if (score >= 5) return "Morno";
                 return "Frio";
             };
-            
-            // ✅ NOVA: Função para exibir a tela de seleção de filmes.
-            const renderMovieSelection = async () => {
-                await updateImage('imagem_final.png'); // Opcional: uma imagem de fundo para a tela de seleção
-                ui.movieSelectionContainer.style.display = 'flex';
 
-                const wrapper = document.createElement('div');
-                wrapper.className = 'movie-grid-wrapper';
+            // ❌ REMOVIDO: Função `renderMovieSelection` não é mais necessária
+            // ❌ REMOVIDO: Função `playLoadingAndRedirect` não é mais necessária
 
-                const title = document.createElement('h2');
-                title.textContent = 'Obrigado! Agora, escolha o seu filme:';
-                wrapper.appendChild(title);
-                
-                const grid = document.createElement('div');
-                grid.className = 'movie-grid';
-                
-                movies.forEach(movie => {
-                    const card = document.createElement('div');
-                    card.className = 'movie-card';
-                    card.onclick = () => playLoadingAndRedirect(movie.link);
-                    
-                    const cover = document.createElement('img');
-                    cover.className = 'movie-cover';
-                    cover.src = movie.cover;
-                    cover.alt = 'Capa do Filme';
-                    
-                    card.appendChild(cover);
-                    grid.appendChild(card);
-                });
-
-                wrapper.appendChild(grid);
-                ui.movieSelectionContainer.appendChild(wrapper);
-            };
-
-            // ✅ NOVA: Função para tocar o vídeo de loading e redirecionar para a URL escolhida.
-            const playLoadingAndRedirect = (url) => {
-                appState = 'LOADING';
-                ui.movieSelectionContainer.style.display = 'none';
-                ui.loadingScreen.style.display = 'flex';
-                
-                const playPromise = ui.finalVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        ui.finalVideo.classList.add('active');
-                    }).catch(error => {
-                        console.warn("Autoplay com som bloqueado. Tocando sem som.", error);
-                        ui.finalVideo.muted = true;
-                        ui.finalVideo.play();
-                        ui.finalVideo.classList.add('active');
-                        ui.unmuteBtn.style.display = 'block';
-                    });
-                }
-                
-                ui.unmuteBtn.addEventListener('click', () => {
-                    ui.finalVideo.muted = false;
-                    ui.unmuteBtn.style.display = 'none';
-                }, { once: true }); // Garante que o evento seja adicionado apenas uma vez
-
-                setTimeout(() => {
-                    window.location.href = url;
-                }, loadingVideoDuration * 1000);
-            };
-            
-            // ✅ FUNÇÃO ATUALIZADA: Agora transiciona para a seleção de filmes.
+            // ✅ FUNÇÃO ATUALIZADA: Envia os dados e redireciona para a URL final.
             const finishJourney = () => {
                 isProcessing = true;
-                appState = 'MOVIE_SELECTION';
+                appState = 'FINISHED'; // Atualiza o estado para finalizado
                 ui.backgroundMusic.pause();
                 ui.inputArea.style.display = 'none';
                 ui.optionsContainer.innerHTML = '';
@@ -709,96 +548,148 @@
                 ui.audioBtn.style.display = 'none';
                 ui.messageContainer.innerHTML = '';
 
-                // 1. TAREFA SECUNDÁRIA: Enviar os dados em segundo plano.
+                // Mostra uma mensagem de "Enviando..." ou similar (opcional)
+                const sendingMsg = document.createElement('div');
+                sendingMsg.className = 'bot-message';
+                sendingMsg.textContent = 'Enviando suas respostas...';
+                ui.messageContainer.appendChild(sendingMsg);
+
+                // --- Preparação do Payload (Comum para ambos os envios - Mantido) ---
+                const finalClassification = classifyLead();
                 const payload = {
-                    nome: userAnswers.nome,
-                    email: userAnswers.email,
-                    telefone: userAnswers.telefone,
-                    classificacao_final: classifyLead()
+                    nome: userAnswers.nome || '',
+                    email: userAnswers.email || '',
+                    telefone: userAnswers.telefone || '',
+                    classificacao_final: finalClassification,
+                    timestamp: new Date().toISOString()
                 };
                 journey.forEach(step => {
-                    if(step.type === 'multiple-choice' && userAnswers[step.name]) {
+                    if (step.type === 'multiple-choice' && userAnswers[step.name]) {
                         payload[step.name] = userAnswers[step.name].text;
                     }
                 });
 
-                fetch(webhookURL, {
+                // --- 1. Envio para n8n Webhook (Mantido) ---
+                console.log("Enviando dados para n8n:", payload);
+                const n8nPromise = fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 })
-                .then(response => console.log(response.ok ? 'Dados enviados com sucesso!' : 'Erro no webhook.'))
-                .catch(error => console.error('Falha ao enviar dados:', error));
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Dados enviados com sucesso para n8n!');
+                    } else {
+                        console.error('Erro ao enviar dados para n8n. Status:', response.status);
+                    }
+                })
+                .catch(error => console.error('Falha na comunicação com o webhook n8n:', error));
 
-                // 2. AÇÃO PRINCIPAL: Mostrar a tela de seleção de filmes.
-                renderMovieSelection();
+                // --- 2. Envio para Google Sheets via Google Apps Script (Mantido) ---
+                let sheetsPromise = Promise.resolve(); // Cria uma promessa resolvida por padrão
+                if (googleAppsScriptURL && googleAppsScriptURL !== 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT_WEB_APP') {
+                    console.log("Enviando dados para Google Sheets:", payload);
+                    sheetsPromise = fetch(googleAppsScriptURL, {
+                        method: 'POST',
+                        headers: {
+                           'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        // mode: 'no-cors', // Descomente apenas se necessário e ajustado no script
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Resposta do Google Apps Script:', data);
+                    })
+                    .catch(error => console.error('Falha na comunicação com o Google Apps Script:', error));
+                } else {
+                     console.warn("URL do Google Apps Script não configurada. Dados não serão enviados para a planilha.");
+                }
+
+                // --- 3. ✅ ALTERAÇÃO: Redirecionamento Direto ---
+                // Espera ambos os envios terminarem (opcional, mas bom para garantir)
+                // Se não quiser esperar, pode redirecionar imediatamente após iniciar os fetches.
+                Promise.all([n8nPromise, sheetsPromise]).finally(() => {
+                    console.log(`Redirecionando para: ${finalRedirectURL}`);
+                    // Usa 'replace' para não adicionar a página atual ao histórico do navegador
+                    window.location.replace(finalRedirectURL);
+                    // Alternativamente, se quiser que o usuário possa voltar:
+                    // window.location.href = finalRedirectURL;
+                });
+
+                // Se NÃO quiser esperar os envios terminarem:
+                // console.log(`Redirecionando para: ${finalRedirectURL}`);
+                // window.location.replace(finalRedirectURL);
+                // // Os fetches continuarão em segundo plano se a rede permitir
             };
-            
+
+
             const openFullscreen = () => {
                 // ... (Função original sem modificações)
                 const elem = document.documentElement;
                 if (document.fullscreenElement) return;
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(err => console.error(`Erro: ${err.message}`));
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.mozRequestFullScreen) {
-                    elem.mozRequestFullScreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
+                try {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE11 */
+                        elem.msRequestFullscreen();
+                    }
+                } catch (err) {
+                    console.error("Erro ao tentar entrar em fullscreen:", err.message);
                 }
             };
-            
-            // 🔧 MODIFICADO: A função init agora esconde a tela de loading inicial ao final do carregamento.
+
             const init = async () => {
+                // Função modificada para remover pré-carregamento de mídias desnecessárias
                 if (backgroundMusicPath) {
                     ui.backgroundMusic.src = backgroundMusicPath;
                     ui.backgroundMusic.volume = 0.2;
                 }
-                const imageSources = [...journey.map(step => step.image), ...movies.map(m => m.cover), 'imagem_final.png'].filter(Boolean);
-                
-                // Incluir o vídeo no pré-carregamento também
+                // Pré-carrega apenas as imagens da jornada e a música
+                const imageSources = journey.map(step => step.image).filter(Boolean);
                 const mediaSources = [
-                    ...imageSources, 
-                    ui.backgroundMusic.src, 
-                    ui.finalVideo.src
+                    ...imageSources,
+                    ui.backgroundMusic.src,
+                    // ❌ REMOVIDO: Vídeo final não é mais necessário
                 ].filter(Boolean);
 
                 const mediaPromises = mediaSources.map(src => new Promise((resolve) => {
-                    // Tenta carregar como imagem primeiro
-                    const img = new Image(); 
-                    img.src = src; 
-                    img.onload = resolve; 
-                    img.onerror = () => {
-                        // Se não for imagem, tenta como áudio ou vídeo (sem realmente tocar)
-                        if (src.endsWith('.mp3') || src.endsWith('.mp4')) {
-                            const media = document.createElement(src.endsWith('.mp3') ? 'audio' : 'video');
-                            media.src = src;
-                            media.onloadeddata = resolve;
-                            media.onerror = resolve; // Não queremos que um erro impeça o carregamento
-                            media.load(); // Apenas inicia o carregamento dos metadados
-                        } else {
-                            resolve(); // Resolve para qualquer outro tipo desconhecido
-                        }
-                    };
+                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(src);
+                    const isAudio = /\.(mp3|wav|ogg)$/i.test(src);
+
+                    if (isImage) {
+                        const img = new Image();
+                        img.src = src;
+                        img.onload = resolve;
+                        img.onerror = () => { console.warn(`Falha ao pré-carregar imagem: ${src}`); resolve(); };
+                    } else if (isAudio) {
+                        const media = document.createElement('audio');
+                        media.src = src;
+                        media.oncanplaythrough = resolve;
+                        media.onerror = () => { console.warn(`Falha ao pré-carregar mídia: ${src}`); resolve(); };
+                        media.load();
+                    } else {
+                        resolve();
+                    }
                 }));
 
-                await Promise.all(mediaPromises); // Espera que TODOS os recursos carreguem
-                
+                await Promise.all(mediaPromises);
+
                 activeImage.src = journey[0].image;
                 await new Promise(resolve => setTimeout(resolve, 10));
                 activeImage.classList.add('active');
                 ui.interactionContainer.classList.add('visible');
                 renderStep();
 
-                // NOVO: Esconde a tela de loading inicial após tudo carregar
                 ui.initialLoadingScreen.classList.add('hidden');
                 ui.initialLoadingScreen.addEventListener('transitionend', () => {
                     ui.initialLoadingScreen.style.display = 'none';
                 }, { once: true });
             };
-            
-            // --- EVENT LISTENERS (sem modificações) ---
+
+            // --- EVENT LISTENERS (sem modificações, exceto os removidos) ---
             ui.userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') handleTextInput();
             });
@@ -806,23 +697,46 @@
             ui.advanceBtn.addEventListener('click', handleTextInput);
             ui.audioBtn.addEventListener('click', () => {
                 const music = ui.backgroundMusic;
-                if (music.paused) {
-                    music.play().catch(() => {});
-                    ui.audioBtn.classList.remove('muted');
-                } else {
-                    music.pause();
-                    ui.audioBtn.classList.add('muted');
+                if (!music.src) return;
+                try {
+                    if (music.paused) {
+                        music.play().then(() => {
+                            ui.audioBtn.classList.remove('muted');
+                            ui.audioBtn.innerHTML = '<i class="fas fa-volume-high"></i>';
+                        }).catch(e => console.warn("Autoplay da música falhou:", e));
+                    } else {
+                        music.pause();
+                        ui.audioBtn.classList.add('muted');
+                        ui.audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    }
+                } catch(e) {
+                    console.error("Erro ao controlar música:", e);
                 }
             });
-            document.body.addEventListener('click', () => {
-                if (ui.backgroundMusic.paused && appState === 'JOURNEY') {
-                   ui.backgroundMusic.play().catch(() => {});
-                   ui.audioBtn.classList.remove('muted');
+
+            // ❌ REMOVIDO: Event listener do botão unmute do vídeo final
+
+            const handleFirstInteraction = () => {
+                if (ui.backgroundMusic.src && ui.backgroundMusic.paused && appState === 'JOURNEY') {
+                    ui.backgroundMusic.play().then(() => {
+                        ui.audioBtn.classList.remove('muted');
+                        ui.audioBtn.innerHTML = '<i class="fas fa-volume-high"></i>';
+                    }).catch(e => {
+                        console.warn("Autoplay da música bloqueado mesmo após interação:", e);
+                        ui.audioBtn.classList.add('muted');
+                        ui.audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    });
                 }
                 openFullscreen();
-            }, { once: true });
-            
-            init();
+                document.body.removeEventListener('click', handleFirstInteraction);
+                document.body.removeEventListener('touchstart', handleFirstInteraction);
+            };
+
+            document.body.addEventListener('click', handleFirstInteraction, { once: true });
+            document.body.addEventListener('touchstart', handleFirstInteraction, { once: true });
+
+
+            init(); // Inicia a aplicação
         });
     </script>
 </body>
